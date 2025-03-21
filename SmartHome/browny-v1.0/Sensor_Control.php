@@ -4,6 +4,9 @@
 session_start(); 
 require 'Connection.php';
 $conn = Connect();
+$sql = "SELECT * FROM sensors";
+$result = $conn->query($sql);
+
 ?>
 <head>
     <meta charset="UTF-8">
@@ -88,18 +91,22 @@ $conn = Connect();
 			<div class="container">
 				<div class="education-horizontal-timeline">
 					<div class="row">
-						<h1>Light Intensity</h1>
+						<h1>Sensors</h1>
 						<table>
 							<tr>
-								<th>ID</th>
-								<th>Intensity</th>
+								<th>RID</th>
 								<th>DateTime</th>
+								<th>Luminosity</th>
+								<th>Temperature</th>
+								<th>Presence</th>
 							</tr>
 							<?php while ($row = $result->fetch_assoc()): ?>
 							<tr>
-								<td><?php echo $row['LID']; ?></td>
-								<td><?php echo $row['Intensity']; ?></td>
+								<td><?php echo $row['RID']; ?></td>
 								<td><?php echo $row['DateTime']; ?></td>
+								<td><?php echo $row['Luminosity']; ?></td>
+								<td><?php echo $row['Temperature']; ?></td>
+								<td><?php echo $row['Presence']; ?></td>
 							</tr>
 							<?php endwhile; ?>
 						</table>
@@ -111,16 +118,16 @@ $conn = Connect();
 		<!--education end -->
 
 		<?php
-		$sql = "SELECT * FROM temperature";  
-		$result = $conn->query($sql);
+		#$sql = "SELECT * FROM sensors";  
+		#$result = $conn->query($sql);
 
-		if ($result->num_rows > 0) {
-    		while($row = $result->fetch_assoc()) {
-        		echo "Nhiệt độ: " . $row["temp"] . "°C<br>";
-    		}
-		} else {
-    		echo "Không có dữ liệu.";
-		}
+		#if ($result->num_rows > 0) {
+    	#	while($row = $result->fetch_assoc()) {
+        #		#echo "Nhiệt độ: " . $row["temperature"] . "°C<br>";
+    	#	}
+		#} else {
+    	#	echo "Không có dữ liệu.";
+		#}
         ?>          
     </div>
 
