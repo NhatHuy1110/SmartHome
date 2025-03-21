@@ -1,1 +1,1 @@
-#SmartHome Application
+SmartHome Application
