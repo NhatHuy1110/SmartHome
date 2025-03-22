@@ -95,11 +95,15 @@ BEGIN
 END //
 
 CREATE TRIGGER room_update
-BEFORE UPDATE ON Room
+AFTER INSERT ON Sensors
 FOR EACH ROW
 BEGIN
-	INSERT INTO Sensors (RID, DateTime, Luminosity, Temperature, Presence)
-	VALUES (OLD.RID, OLD.DateTime, OLD.Luminosity, OLD.Temperature, OLD.Presence);
+    UPDATE Room
+    SET Luminosity = NEW.Luminosity,
+        Temperature = NEW.Temperature,
+        Presence = NEW.Presence,
+        DateTime = NEW.DateTime
+    WHERE RID = NEW.RID;
 END;
 //
 DELIMITER ;
