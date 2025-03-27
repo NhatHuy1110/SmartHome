@@ -85,7 +85,12 @@ BEGIN
 	JOIN Event E1 ON A.EID = E1.EID
 	JOIN Event E2 ON NEW.EID = E2.EID
 	WHERE A.RID = NEW.RID
-	AND E1.EDate = E2.EDate
+	AND (
+        (E1.EDate = E2.EDate) OR 
+        (E1.ERepeat = 'Daily' OR E2.ERepeat = 'Daily') OR
+        (E1.ERepeat = 'Weekly' AND E2.ERepeat = 'Weekly' AND MOD(DATEDIFF(E1.EDate, E2.EDate), 7) = 0) OR
+        (E1.ERepeat = 'Monthly' AND E2.ERepeat = 'Monthly' AND DAY(E1.EDate) = DAY(E2.EDate))
+    )
 	AND (E1.Start_Time < ADDTIME(E2.Start_Time, SEC_TO_TIME(E2.Duration * 60))
      	AND ADDTIME(E1.Start_Time, SEC_TO_TIME(E1.Duration * 60)) > E2.Start_Time);
     
@@ -104,6 +109,63 @@ BEGIN
         Presence = NEW.Presence,
         DateTime = NEW.DateTime
     WHERE RID = NEW.RID;
+END;
+//
+
+CREATE TRIGGER check_room_bounds
+AFTER UPDATE ON Room
+FOR EACH ROW
+BEGIN
+    DECLARE event_count INT;
+    DECLARE event_eid INT;
+    DECLARE temp_error TEXT;
+    DECLARE lum_error TEXT;
+
+    -- Check if there is a related event for the room
+    SELECT COUNT(*), EID INTO event_count, event_eid
+    FROM At A
+    JOIN Event E ON A.EID = E.EID
+    WHERE A.RID = NEW.RID
+    AND (
+        (E.EDate = DATE(NEW.DateTime)) OR
+        (E.ERepeat = 'Daily') OR
+        (E.ERepeat = 'Weekly' AND MOD(DATEDIFF(DATE(NEW.DateTime), E.EDate), 7) = 0) OR
+        (E.ERepeat = 'Monthly' AND DAY(E.EDate) = DAY(DATE(NEW.DateTime)))
+    )
+    AND NEW.DateTime >= TIMESTAMP(E.EDate, E.Start_Time)
+    AND NEW.DateTime <= TIMESTAMP(E.EDate, ADDTIME(E.Start_Time, SEC_TO_TIME(E.Duration * 60)))
+    LIMIT 1;
+
+    -- If there is a related event, check bounds
+    IF event_count > 0 THEN
+        SET temp_error = NULL;
+        SET lum_error = NULL;
+
+        -- Check temperature bounds
+        IF NEW.Temperature > (SELECT Temp_Upper FROM Event WHERE EID = event_eid) THEN
+            SET temp_error = CONCAT('Temperature exceeded upper bound in Room ', NEW.RID);
+        ELSEIF NEW.Temperature < (SELECT Temp_Lower FROM Event WHERE EID = event_eid) THEN
+            SET temp_error = CONCAT('Temperature fell below lower bound in Room ', NEW.RID);
+        END IF;
+
+        -- Check luminosity bounds
+        IF NEW.Luminosity > (SELECT Lum_Upper FROM Event WHERE EID = event_eid) THEN
+            SET lum_error = CONCAT('Luminosity exceeded upper bound in Room ', NEW.RID);
+        ELSEIF NEW.Luminosity < (SELECT Lum_Lower FROM Event WHERE EID = event_eid) THEN
+            SET lum_error = CONCAT('Luminosity fell below lower bound in Room ', NEW.RID);
+        END IF;
+
+        -- Insert notifications if errors exist
+        IF temp_error IS NOT NULL THEN
+            INSERT INTO Notification (NID, EID, DateTime, Error_Message)
+            VALUES ((SELECT IFNULL(MAX(NID), 0) + 1 FROM Notification), event_eid, NOW(), temp_error);
+        END IF;
+
+        IF lum_error IS NOT NULL THEN
+            INSERT INTO Notification (NID, EID, DateTime, Error_Message)
+            VALUES ((SELECT IFNULL(MAX(NID), 0) + 1 FROM Notification), event_eid, NOW(), lum_error);
+        END IF;
+    END IF;
 END;
 //
 DELIMITER ;
