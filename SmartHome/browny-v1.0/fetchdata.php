@@ -1,5 +1,5 @@
 <?php
-$apiKey = "aio_PhuS69hnveGol4G6Ij5HHqEU3onR";
+$apiKey = "aio_eKEI39ToPIcKaNgfs6mN5WV1mbs7";
 $feedName = "Light level";
 $url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level"; 
 $url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
@@ -38,12 +38,12 @@ curl_close($ch2);
 $data2 = json_decode($response2, true);
 print_r($data2);
 
-$mysqli = new mysqli("localhost", "root", "", "smarthome");
+$mysqli = new mysqli("localhost:3307", "root", "", "smarthome");
 
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
-
+date_default_timezone_set("Asia/Ho_Chi_Minh");
 foreach ($data as $item) {
     #$intensity = $item["Intensity"];
     #$datetime = $item["DateTime"];
@@ -54,10 +54,21 @@ foreach ($data as $item) {
 
     $pres = $data2["last_value"];
 
+    if ($pres === "Yes") {
+        $pres =1 ;
+    } elseif ($pres === "No") {
+        $pres = 0;
+    } else {
+        $pres = -1;
+    }
+    
+    
+
     $stmt = $mysqli->prepare("INSERT INTO sensors (RID,DateTime,Luminosity, Temperature,Presence) VALUES (1,?,?,?, ?)");
     $stmt->bind_param("sddd", $datetime,$lum,$temp,$pres);
     $stmt->execute();
 }
 $stmt->close();
 $mysqli->close();
+ echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);
 ?>

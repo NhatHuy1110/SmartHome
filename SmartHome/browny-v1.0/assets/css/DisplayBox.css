@@ -1,0 +1,78 @@
+.data-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .data-square {
+    width: 300px;
+    height: 180px;
+    margin: 10px;
+    padding: 6px;
+    background-color: #f3f3f3;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .data-label {
+    letter-spacing: normal;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .data-value {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  header.top-area {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999; /* Ensure it's on top of other elements */
+}
+
+section {
+    margin-top: 100px; /* Adjust this value based on your header's height */
+}
+
+/* Limit the dropdown menu to fit the content */
+.navbar-collapse {
+  overflow: hidden; /* Prevent the menu from extending unnecessarily */
+}
+
+.navbar-collapse.collapse.in {
+    height: auto; /* Adjust the height to fit the content */
+}
+
+.navbar-nav > li > a {
+    padding: 10px 15px; /* Adjust padding for dropdown items */
+}
+
+.navbar-toggle {
+    margin-right: 10px; /* Space for the toggle button */
+}
+
+@media (max-width: 768px) {
+    .navbar-nav {
+        margin-bottom: 0;
+
+    }
+
+    .navbar-collapse {
+        margin: 0 auto; /* Center dropdown items */
+        width: 100%; /* Full width on smaller screens */
+    }
+}
+
+
+
+

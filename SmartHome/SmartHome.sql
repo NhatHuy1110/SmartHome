@@ -112,29 +112,9 @@ DELIMITER ;
 INSERT INTO User (UID, Password) VALUES (1, 'password123'), (2, 'securepass');
 
 INSERT INTO Room (RID, DateTime, Luminosity, Temperature, Presence) VALUES
-(1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE),
-(2, '2025-03-14 08:00:00', 40.0, 21.0, FALSE);
-
-INSERT INTO Event (EID, UID, EName, EDate, Start_Time, Duration, ERepeat, Temp_Upper, Temp_Lower, Lum_Upper, Lum_Lower) VALUES
-(1, 1, 'Morning Meeting', '2025-03-14', '09:00:00', 60, 'None', 25.0, 20.0, 60.0, 40.0),
-(2, 1, 'Project Discussion', '2025-03-14', '10:30:00', 90, 'Weekly', 24.0, 19.0, 55.0, 35.0);
-
-INSERT INTO Notification (NID, EID, DateTime, Error_Message) VALUES
-(1, 1, '2025-03-14 08:30:00', 'Error at Room 2 Temperature sensor'),
-(2, 2, '2025-03-14 10:15:00', 'Error at Light 1 Room 1');
-
-INSERT INTO At (EID, RID) VALUES
-(1, 1),
-(2, 2);
+(1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
 
 
-INSERT INTO Light (RID, LID, DateTime, Intensity) VALUES
-(1, 1, '2025-03-14 08:00:00', 70.0),
-(2, 2, '2025-03-14 08:00:00', 50.0);
-
-INSERT INTO Fan (RID, FID, DateTime, Fan_Speed) VALUES
-(1, 1, '2025-03-14 08:00:00', 3),
-(2, 2, '2025-03-14 08:00:00', 2);
-
-
+INSERT INTO sensors (RID, DateTime, Luminosity, Temperature, Presence) VALUES
+(1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
 

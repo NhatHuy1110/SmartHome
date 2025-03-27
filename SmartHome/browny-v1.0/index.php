@@ -13,6 +13,8 @@ $conn = Connect();
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
+        <link rel="stylesheet" href="assets/css/DisplayBox.css">
+
         <!--font-family-->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&amp;subset=devanagari,latin-ext" rel="stylesheet">
         
@@ -66,40 +68,35 @@ $conn = Connect();
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
 		
-		<!-- top-area Start -->
-		<header class="top-area">
-			<div class="header-area">
-				<!-- Start Navigation -->
-			    <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
+		<div class="header-area">
+        <!-- Start Navigation -->
+        <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
+            <div class="container">
+                <!-- Start Header Navigation -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="index.php">Smart Home</a>
+                </div><!--/.navbar-header-->
+                <!-- End Header Navigation -->
 
-			        <div class="container">
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                        <li class=" smooth-menu active"></li>
+                        <li><a href="Dash_Board.php">Dash Board</a></li>
+                        <li><a href="Event.php">Event</a></li>
+                        <li><a href="Profile.php">Profile</a></li>
+                        <li><a href="Logout.php">Logout</a></li>
+                    </ul><!--/.nav -->
+                </div><!-- /.navbar-collapse -->
+            </div><!--/.container-->
+        </nav><!--/nav-->
+        <!-- End Navigation -->
+    </div><!--/.header-area-->
 
-			            <!-- Start Header Navigation -->
-			            <div class="navbar-header">
-			                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-			                    <i class="fa fa-bars"></i>
-			                </button>
-			                <a class="navbar-brand" href="index.php">Smart Home</a>
-			            </div><!--/.navbar-header-->
-			            <!-- End Header Navigation -->
-
-			            <!-- Collect the nav links, forms, and other content for toggling -->
-			            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
-			                <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-			                <li class=" smooth-menu active"></li>
-			                    <!-- <li class=" smooth-menu"><a href="#education">education</a></li> -->
-								<li> <a href="Sensor_Control.php">Sensor Control</a></li>
-								<li> <a href="Skill.php">Skill</a></li>
-			                    <li> <a href="Experience.php">Experience</a></li>
-			                    <li> <a href="Contact.php">Contact</a></li>
-			                </ul><!--/.nav -->
-			            </div><!-- /.navbar-collapse -->
-			        </div><!--/.container-->
-			    </nav><!--/nav-->
-			    <!-- End Navigation -->
-			</div><!--/.header-area-->
-
-		    <div class="clearfix"></div>
+    <div class="clearfix"></div>
 
 		</header><!-- /.top-area-->
 		<!-- top-area End -->
@@ -158,6 +155,14 @@ $conn = Connect();
         <!--Custom JS-->
         <script src="assets/js/custom.js"></script>
         
+        <script>
+          $(document).ready(function() {
+             $('#navbar-menu').on('show.bs.collapse', function() {
+                 $(this).css('height', 'auto'); // Set height dynamically
+                });
+           });
+        </script>
+
     </body>
 	
 </html>
