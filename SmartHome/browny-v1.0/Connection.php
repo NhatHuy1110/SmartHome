@@ -2,7 +2,7 @@
 
 function Connect()
 {
-	$dbhost = "localhost:3307";
+	$dbhost = "localhost";
 	$dbuser = "root";
 	$dbpass = "";
 	$dbname = "smarthome";

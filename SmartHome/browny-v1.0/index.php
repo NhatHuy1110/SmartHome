@@ -64,9 +64,6 @@ $conn = Connect();
     </head>
 	
 	<body>
-		<!--[if lte IE 9]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-        <![endif]-->
 		
 		<div class="header-area">
         <!-- Start Navigation -->
@@ -80,21 +77,39 @@ $conn = Connect();
                     <a class="navbar-brand" href="index.php">Smart Home</a>
                 </div><!--/.navbar-header-->
                 <!-- End Header Navigation -->
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class=" smooth-menu active"></li>
-                        <li><a href="Dash_Board.php">Dash Board</a></li>
-                        <li><a href="Event.php">Event</a></li>
-                        <li><a href="Profile.php">Profile</a></li>
-                        <li><a href="Logout.php">Logout</a></li>
-                    </ul><!--/.nav -->
-                </div><!-- /.navbar-collapse -->
+                <?php
+                if(isset($_SESSION['login_customer'])){
+                ?>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                        <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                            <li class=" smooth-menu active"></li>
+                            <li><a href="Dash_Board.php">Dash Board</a></li>
+                            <li><a href="Event.php">Event</a></li>
+                            <li><a href="Profile.php">Profile</a></li>
+                            <li><a href="Logout.php">Logout</a></li>
+                        </ul><!--/.nav -->
+                    </div><!-- /.navbar-collapse -->
+                <?php
+                }
+                else {
+                ?>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                        <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                            <li class=" smooth-menu active"></li>
+                            <li><a href="Login.php">Dash Board</a></li>
+                            <li><a href="Login.php">Event</a></li>
+                            <li><a href="Login.php">Profile</a></li>
+                            <li><a href="Login.php">Login</a></li>
+                        </ul><!--/.nav -->
+                    </div><!-- /.navbar-collapse -->
+                <?php   }
+                ?>
             </div><!--/.container-->
         </nav><!--/nav-->
         <!-- End Navigation -->
-    </div><!--/.header-area-->
+        </div><!--/.header-area-->
 
     <div class="clearfix"></div>
 
