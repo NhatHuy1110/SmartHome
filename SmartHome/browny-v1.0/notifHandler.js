@@ -2,22 +2,36 @@
 $(document).ready(function () {
 
     $('.notification').load('Notification.php');
-    $('.counter').text('0').hide();
 
-    var counter = 0;
-    let prevnotifnum = localStorage.getItem('prevnotifnum') || 0;
+    let counter = parseInt(localStorage.getItem('counter')) || 0;
+    let prevNotifNum = parseInt(localStorage.getItem('prevNotifNum')) || 0;
+
+    if (counter > 0) {
+        $('.counter').text(counter).show(); // Show red number if new notification
+    } else {
+        $('.counter').text('0').hide(); // Hide if not
+    }
 
     function loadNotifications() {
         $.get('Notification.php', function (data) {
             if (data) {
                 let notificationData = JSON.parse(data);
-                if (notificationData.length > 0 && notificationData.length != prevnotifnum) {
-                    if (notificationData.length > prevnotifnum) {
-                        counter += notificationData.length - prevnotifnum;
-                    } else counter = notificationData.length
-                    prevnotifnum = notificationData.length // do not remove this
-                    localStorage.setItem('prevnotifnum', notificationData.length);
-                    $('.counter').text(counter).show(); // Reveal red number if new notification not 0
+                if (notificationData.length > 0 && notificationData.length != prevNotifNum) {
+                    if (notificationData.length > prevNotifNum) {
+                        counter += notificationData.length - prevNotifNum;
+                    } else {
+                        counter = notificationData.length
+                    }
+                    prevNotifNum = notificationData.length // do not remove this
+
+                    localStorage.setItem('counter', counter); // Update localStorage
+                    localStorage.setItem('prevNotifNum', prevNotifNum); // Update prevNotifNum in localStorage
+
+                    if (counter > 0) {
+                        $('.counter').text(counter).show(); // Show red number if new notification
+                    } else {
+                        $('.counter').text('0').hide(); // Hide if not
+                    }
                 }
                 // dropdown list
                 $('.notification').html('');
@@ -40,6 +54,7 @@ $(document).ready(function () {
 
     $('#numUnseen').on('click', function () {
         counter = 0;
+        localStorage.setItem('counter', 0);
         $('.counter').text('0').hide(); // Reset counter when clicked
     });
 });

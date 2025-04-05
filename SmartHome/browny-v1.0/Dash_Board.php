@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php 
-session_start(); 
+<?php
+session_start();
 require 'Connection.php';
 $conn = Connect();
 
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&amp;subset=devanagari,latin-ext" rel="stylesheet">
-    <link rel="shortcut icon" type="image/icon" href="assets/logo/favicon.png"/>
+    <link rel="shortcut icon" type="image/icon" href="assets/logo/favicon.png" />
 
     <!-- Css for data display box -->
     <link rel="stylesheet" href="assets/css/DisplayBox.css">
@@ -55,9 +56,10 @@ $conn = Connect();
 
     <title>Dash Board</title>
 </head>
+
 <body>
 
-   <div class="header-area">
+    <div class="header-area">
         <!-- Start Navigation -->
         <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
             <div class="container">
@@ -79,7 +81,7 @@ $conn = Connect();
                         <li><a href="Profile.php">Profile</a></li>
                         <li><a href="Logout.php">Logout</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle text-light" id="noti_count" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
+                            <a href="#" class="dropdown-toggle text-light" id="numUnseen" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
                                 <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
                                 <i class="fas fa-bell" style="font-size: 20px;"></i>
                             </a>
@@ -104,19 +106,19 @@ $conn = Connect();
                 <p id="luminosity" class="data-value"></p>
             </div>
             <div class="data-square">
-              <h3 class="data-label">Temperature</h3>
-              <p id="temperature" class="data-value"></p>
+                <h3 class="data-label">Temperature</h3>
+                <p id="temperature" class="data-value"></p>
             </div>
             <div class="data-square">
-              <h3 class="data-label">Presence</h3>
-              <p id="presence" class="data-value"></p>
+                <h3 class="data-label">Presence</h3>
+                <p id="presence" class="data-value"></p>
             </div>
         </div>
 
         <!-- Add the container for the graph -->
         <div class="chartContainer">
             <canvas id="realTimeChart"></canvas>
-        </div>        
+        </div>
 
     </section>
 
@@ -129,8 +131,7 @@ $conn = Connect();
             type: 'line',
             data: {
                 labels: [], // Time labels will be added dynamically
-                datasets: [
-                    {
+                datasets: [{
                         label: 'Temperature (°C)',
                         data: [], // Temperature data will be added dynamically
                         borderColor: 'rgba(255, 99, 132, 1)',
@@ -151,15 +152,20 @@ $conn = Connect();
             options: {
                 scales: {
                     x: {
-                        title: { display: true, text: 'Time' }
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
                     },
                     y: {
-                        title: { display: true, text: 'Value' }
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
                     }
                 }
             }
         });
-
     </script>
 
 
@@ -195,46 +201,46 @@ $conn = Connect();
         }
 
         let previousData = {
-                        Temperature: null,
-                        Luminosity: null
-                    };
+            Temperature: null,
+            Luminosity: null
+        };
 
-                    function updateChart() {
-                        fetch('fetch_sensors.php') // Make a request to your backend
-                            .then(response => response.json())
-                            .then(data => {
-                                const now = data.DateTime || 'N/A';//new Date().toLocaleTimeString(); // Get current time
+        function updateChart() {
+            fetch('fetch_sensors.php') // Make a request to your backend
+                .then(response => response.json())
+                .then(data => {
+                    const now = data.DateTime || 'N/A'; //new Date().toLocaleTimeString(); // Get current time
 
-                                // Check if the data has changed
-                                if (
-                                    data.Temperature !== previousData.Temperature ||
-                                    data.Luminosity !== previousData.Luminosity
-                                ) {
-                                    realTimeChart.data.labels.push(now);
+                    // Check if the data has changed
+                    if (
+                        data.Temperature !== previousData.Temperature ||
+                        data.Luminosity !== previousData.Luminosity
+                    ) {
+                        realTimeChart.data.labels.push(now);
 
-                                    // Limit the number of labels/data points
-                                    if (realTimeChart.data.labels.length > 10) {
-                                        realTimeChart.data.labels.shift();
-                                        realTimeChart.data.datasets[0].data.shift();
-                                        realTimeChart.data.datasets[1].data.shift();
-                                    }
+                        // Limit the number of labels/data points
+                        if (realTimeChart.data.labels.length > 10) {
+                            realTimeChart.data.labels.shift();
+                            realTimeChart.data.datasets[0].data.shift();
+                            realTimeChart.data.datasets[1].data.shift();
+                        }
 
-                                    // Update the datasets
-                                    realTimeChart.data.datasets[0].data.push(data.Temperature || 0); // Add temperature
-                                    realTimeChart.data.datasets[1].data.push(data.Luminosity || 0);  // Add luminosity
+                        // Update the datasets
+                        realTimeChart.data.datasets[0].data.push(data.Temperature || 0); // Add temperature
+                        realTimeChart.data.datasets[1].data.push(data.Luminosity || 0); // Add luminosity
 
-                                    // Update the chart
-                                    realTimeChart.update();
+                        // Update the chart
+                        realTimeChart.update();
 
-                                    // Store current data for comparison in the next cycle
-                                    previousData.Temperature = data.Temperature;
-                                    previousData.Luminosity = data.Luminosity;
-                                }
-                            })
-                            .catch(error => console.error('Error fetching sensor data:', error));
+                        // Store current data for comparison in the next cycle
+                        previousData.Temperature = data.Temperature;
+                        previousData.Luminosity = data.Luminosity;
                     }
+                })
+                .catch(error => console.error('Error fetching sensor data:', error));
+        }
 
-                    
+
 
         // Call fetchdata.php every 1.5 seconds
         setInterval(callFetchData, 1100);
@@ -249,41 +255,50 @@ $conn = Connect();
 
     <script>
         window.addEventListener('resize', () => {
-        realTimeChart.resize(); // Trigger Chart.js to resize dynamically
+            realTimeChart.resize(); // Trigger Chart.js to resize dynamically
         });
     </script>
 
     <style>
         .chartContainer {
-            box-sizing: border-box; /* Includes padding and borders in width calculation */
-            background-color: #ffffff; /* Solid black background */
-            border: 2px solid #cccccc; /* Border around the box */
-            border-radius: 10px; /* Rounded corners */
-            width: 943px; /* Set fixed horizontal width */
-            max-width: 100%; /* Ensure it scales down responsively */
-            margin: auto; /* Center the box horizontally */
+            box-sizing: border-box;
+            /* Includes padding and borders in width calculation */
+            background-color: #ffffff;
+            /* Solid black background */
+            border: 2px solid #cccccc;
+            /* Border around the box */
+            border-radius: 10px;
+            /* Rounded corners */
+            width: 943px;
+            /* Set fixed horizontal width */
+            max-width: 100%;
+            /* Ensure it scales down responsively */
+            margin: auto;
+            /* Center the box horizontally */
             height: 475px;
         }
 
 
         #realTimeChart {
-            width: 100% !important; /* Fit the container horizontally */
-            height: auto !important; /* Keep the aspect ratio */
+            width: 100% !important;
+            /* Fit the container horizontally */
+            height: auto !important;
+            /* Keep the aspect ratio */
         }
-
     </style>
 
     <!-- Include jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-	<script>
-    $(document).ready(function() {
-        $('#navbar-menu').on('show.bs.collapse', function() {
-            $(this).css('height', 'auto'); // Set height dynamically
+    <script>
+        $(document).ready(function() {
+            $('#navbar-menu').on('show.bs.collapse', function() {
+                $(this).css('height', 'auto'); // Set height dynamically
+            });
         });
-    });
     </script>
 
 
 </body>
+
 </html>
