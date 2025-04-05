@@ -60,6 +60,11 @@ $conn = Connect();
 			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+    <script src="https://kit.fontawesome.com/6b23de7647.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="notifHandler.js"></script>
+
+</head>
 
     </head>
 	
@@ -89,6 +94,15 @@ $conn = Connect();
                         <li><a href="Event.php">Event</a></li>
                         <li><a href="Profile.php">Profile</a></li>
                         <li><a href="Logout.php">Logout</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle text-light" id="noti_count" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
+                                <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
+                                <i class="fas fa-bell" style="font-size: 20px;"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <div class="notification" style="max-height: 200px; overflow-y: auto;"></div>
+                            </div>
+                        </li>
                     </ul><!--/.nav -->
                 </div><!-- /.navbar-collapse -->
             </div><!--/.container-->

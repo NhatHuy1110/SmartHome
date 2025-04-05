@@ -9,11 +9,13 @@ $notifs = $conn->selectNRows('notification', 'DateTime', 10);
 
 <?php
 $notifications = [];
-foreach ($notifs as $notif) {
-    $notifications[] = [
-        'Error_Message' => $notif['Error_Message'],
-        'DateTime' => $notif['DateTime']
-    ];
+if ($notifs) {
+    foreach ($notifs as $notif) {
+        $notifications[] = [
+            'Error_Message' => $notif['Error_Message'],
+            'DateTime' => $notif['DateTime']
+        ];
+    }
 }
 
 echo json_encode($notifications);
