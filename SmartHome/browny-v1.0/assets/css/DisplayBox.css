@@ -1,47 +1,341 @@
-.data-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .data-square {
-    width: 300px;
-    height: 180px;
-    margin: 10px;
-    padding: 6px;
-    background-color: #f3f3f3;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .data-label {
-    letter-spacing: normal;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .data-value {
-    font-size: 24px;
-    font-weight: 600;
-    text-align: center;
-  }
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
 
-  header.top-area {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 999; /* Ensure it's on top of other elements */
+#resetButton {
+  margin-left: auto; /* Push the button to the right */  width: 80px; /* Square button: height will match */
+  height: 34px;
+  background-color: #ffffff; /* Initial color: red */
+  color: rgb(0, 0, 0); /* Text color */
+  border: 1px solid black ;
+  border-radius: 8px; /* Slightly rounded corners */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+  transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth transitions */
+}
+
+#resetButton:hover {
+  background-color: #e53935; /* Darker red on hover */
+}
+
+#resetButton:active {
+  background-color: #ff7961; /* Lighter red on click */
+  transform: scale(0.95); /* Slightly shrink button */
+}
+
+#resetButton.flash {
+  animation: flash-color 0.3s ease-out; /* Flash animation */
+}
+
+/* Animation for the flash effect */
+@keyframes flash-color {
+  0% {
+      background-color: #ffeb3b; /* Flash color: yellow */
+  }
+  100% {
+      background-color: #f44336; /* Reset to original red */
+  }
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider1 {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider1:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider1 {
+  background-color: #2196F3;
+}
+
+input:focus + .slider1 {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider1:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider1.round {
+  border-radius: 34px;
+}
+
+.slider1.round:before {
+  border-radius: 50%;
+}
+
+.hidden {
+  display: none;
+}
+
+#inputBoxContainer {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  width: 100%;
+}
+
+h4 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #333;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  width: 100%; /* Ensure the group uses the full container width */
+  margin-bottom: 12px; /* Space between rows */
+}
+
+.input-group label {
+  flex-shrink: 0; /* Prevent the label from shrinking */
+  white-space: nowrap; /* Keep the label on a single line */
+  margin-right: 8px; /* Add spacing between the label and input */
+  font-size: 14px;
+  color: #555;
+}
+
+.input-group input {
+  flex-grow: 1; /* Allow the input to take up all remaining space */
+  width: 100%; /* Ensure the input fills the width of the group */
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Account for padding and borders in size calculations */
+}
+
+
+
+
+
+.button-row {
+  text-align: center;
+  margin-top: 16px;
+}
+
+#confirmButton {
+  width: 100px;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#confirmButton:hover {
+  background-color: #45a049;
+}
+
+#confirmButton:active {
+  background-color: #3e8e41;
+}
+
+
+.input-summary {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-width: 500px;
+  margin-top: 16px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.input-summary h4 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.input-summary table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.input-summary th, .input-summary td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 10px;
+}
+
+.input-summary th {
+  background-color: #f0f0f0;
+  color: #555;
+  font-weight: bold;
+}
+
+.input-summary tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.input-summary tr:hover {
+  background-color: #e6f7ff;
+  transition: background-color 0.3s ease;
+}
+
+
+
+.data-container {
+  display: flex;
+  flex-direction:row; /* Allow the boxes to wrap on smaller screens */
+  justify-content: center; /* Align items to the left */
+  gap: 1px; /* Add space between the boxes */
+  width: 100%; /* Allow it to use the full width of .left-section */
+  box-sizing: border-box; /* Include padding and borders in width calculations */
+}
+
+.page {
+  width: 100%;
+  height: auto;
+  display: flex; /* Activate flex container for alignment */
+  justify-content: space-between; /* Align children to the left */
+  align-items: flex-start; /* Align vertically to the top */
+}
+
+.left-section {
+  display: flex;
+  flex-direction: column; /* Keep the boxes and chart stacked */
+  align-items: stretch; /* Let child elements use the full width */
+  width: 70%; /* Left section takes up 70% of the page */
+  box-sizing: border-box; /* Include padding/borders in width calculations */
+}
+
+
+.right-section {
+  width: 30%; /* Set the width for the right section */
+  padding: 10px; /* Add padding inside the section */
+  height: auto;
+}
+.box {
+  background-color: #fff;
+  border: 1px solid #000000;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.slider-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.slider {
+  width: 100%;
+}
+
+.value-display {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
+
+.chartContainer {
+  box-sizing: border-box; /* Includes padding and borders in width calculation */
+  background-color: #ffffff; /* Solid black background */
+  border: 2px solid #cccccc; /* Border around the box */
+  border-radius: 10px; /* Rounded corners */
+  width: 943px; /* Set fixed horizontal width */
+  max-width: 100%; /* Ensure it scales down responsively */
+  margin: auto; /* Center the box horizontally */
+  height: 475px;
+}
+
+
+#realTimeChart {
+  width: 100% !important; /* Fit the container horizontally */
+  height: auto !important; /* Keep the aspect ratio */
+}
+  
+.data-square {
+  width: 300px;
+  height: 180px;
+  margin: 10px;
+  background-color: #f3f3f3;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+} 
+
+
+
+.data-label {
+  letter-spacing: normal;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.data-value {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+header.top-area {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999; /* Ensure it's on top of other elements */
 }
 
 section {
-    margin-top: 100px; /* Adjust this value based on your header's height */
+  margin-top: 90px; /* Adjust this value based on your header's height */
 }
 
 /* Limit the dropdown menu to fit the content */
@@ -50,27 +344,43 @@ section {
 }
 
 .navbar-collapse.collapse.in {
-    height: auto; /* Adjust the height to fit the content */
+  height: auto; /* Adjust the height to fit the content */
 }
 
 .navbar-nav > li > a {
-    padding: 10px 15px; /* Adjust padding for dropdown items */
+  padding: 10px 15px; /* Adjust padding for dropdown items */
 }
 
 .navbar-toggle {
-    margin-right: 10px; /* Space for the toggle button */
+  margin-right: 10px; /* Space for the toggle button */
 }
 
 @media (max-width: 768px) {
-    .navbar-nav {
-        margin-bottom: 0;
+  .navbar-nav {
+    margin-bottom: 0;
 
-    }
+  }
 
-    .navbar-collapse {
-        margin: 0 auto; /* Center dropdown items */
-        width: 100%; /* Full width on smaller screens */
-    }
+  .navbar-collapse {
+    margin: 0 auto; /* Center dropdown items */
+    width: 100%; /* Full width on smaller screens */
+  }
+
+  .page {
+    flex-direction: column; /* Stack the left and right sections */
+    gap: 10px;
+  }
+  .left-section, .right-section {
+    width: 100%; /* Make each section full width */
+  }
+  .data-square {
+    flex: 1 1 100%; /* Each box takes the full width of its row */
+    max-width: 100%; /* Prevent boxes from exceeding the container width */
+  }
+  .chartContainer {
+    width: 100%; /* Ensure the chart adjusts to smaller screens */
+    margin: 0 auto; /* Center the chart */
+  }
 }
 
 
