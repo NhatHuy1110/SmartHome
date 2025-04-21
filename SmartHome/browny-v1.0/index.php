@@ -67,6 +67,7 @@ $conn = Connect();
 </head>
 
 
+
 <body>
     <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
@@ -85,7 +86,7 @@ $conn = Connect();
                 </div><!--/.navbar-header-->
                 <!-- End Header Navigation -->
                 <?php
-                if(isset($_SESSION['login_customer'])){
+                if (isset($_SESSION['login_customer'])) {
                 ?>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
@@ -107,8 +108,7 @@ $conn = Connect();
                     </ul><!--/.nav -->
                 </div><!-- /.navbar-collapse -->
                 <?php
-                }
-                else {
+                } else {
                 ?>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
@@ -125,7 +125,7 @@ $conn = Connect();
             </div><!--/.container-->
         </nav><!--/nav-->
         <!-- End Navigation -->
-        </div><!--/.header-area-->
+    </div><!--/.header-area-->
 
     <div class="clearfix"></div>
 

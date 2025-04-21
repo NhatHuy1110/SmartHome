@@ -120,8 +120,16 @@ $conn = Connect();
             <canvas id="realTimeChart"></canvas>
         </div>
 
-    </section>
+        <div class="chartContainer">
+            <label>Select an Option:</label>
+            <select id="menu-range" name="menu" onchange="handleDropdownChange()">
+                <option value="Week">7 Days</option>
+                <option value="Month">30 Days</option>
+            </select>
+            <canvas id="visualTemp"></canvas>
+        </div>
 
+    </section>
 
     <script>
         const ctx = document.getElementById('realTimeChart').getContext('2d');
@@ -167,7 +175,6 @@ $conn = Connect();
             }
         });
     </script>
-
 
     <script>
         // Function to call fetchdata.php and log the response
@@ -240,7 +247,134 @@ $conn = Connect();
                 .catch(error => console.error('Error fetching sensor data:', error));
         }
 
+        function fetchHistoryTemp() {
+            const dateStart = new Date();
+            const range = document.getElementById('menu-range').value;
 
+            // Adjust the start date based on the selected range
+            if (range === 'Week') {
+                dateStart.setDate(dateStart.getDate() - 7); // Subtract 7 days
+            } else if (range === 'Month') {
+                dateStart.setDate(dateStart.getDate() - 30); // Subtract 30 days
+            }
+            const formattedDateStart = dateStart.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            const dateEnd = new Date();
+            dateEnd.setDate(dateEnd.getDate() - 1); // Subtract 1 day for the end date
+            const formattedDateEnd = dateEnd.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            // Construct the POST body with parameters
+            const postBody = `dateStart=${formattedDateStart}&dateEnd=${formattedDateEnd}`;
+
+            // Send the POST request
+            fetch('fetch_history.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: postBody, // Send the constructed parameters
+                })
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    console.log('Historical Data:', data); // Log the response data
+
+                    // Calculate daily averages
+                    const averages = calculateDailyAverages(data);
+                    console.log('Daily Averages:', averages);
+
+                    // Extract labels (dates) and datasets (temperature and luminosity averages)
+                    const labels = averages.map(avg => avg.date);
+                    const temperatureData = averages.map(avg => avg.averageTemperature);
+                    const luminosityData = averages.map(avg => avg.averageLuminosity);
+
+                    // Update the chart with the calculated data
+                    const ctx = document.getElementById('visualTemp').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line', // Line chart
+                        data: {
+                            labels: labels, // Dates
+                            datasets: [{
+                                    label: 'Average Temperature (°C)',
+                                    data: temperatureData, // Average temperatures
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: false,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Average Luminosity (LUX)',
+                                    data: luminosityData, // Average luminosities
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    fill: false,
+                                    tension: 0.1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Daily Averages of Temperature and Luminosity'
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Value'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching historical data:', error)); // Handle errors
+        }
+
+        function calculateDailyAverages(data) {
+            const groupedData = {};
+
+            // Group temperatures and luminosities by date
+            data.forEach(record => {
+                const date = record.DateTime.split(' ')[0]; // Extract the date (YYYY-MM-DD)
+                if (!groupedData[date]) {
+                    groupedData[date] = {
+                        temperatures: [],
+                        luminosities: []
+                    };
+                }
+                groupedData[date].temperatures.push(Number(record.Temperature)); // Ensure Temperature is a number
+                groupedData[date].luminosities.push(Number(record.Luminosity)); // Ensure Luminosity is a number
+            });
+
+            console.log(`Grouped Data:`, groupedData);
+
+            // Calculate the average temperature and luminosity for each date
+            const dailyAverages = Object.entries(groupedData).map(([date, values]) => {
+                const totalTemperature = values.temperatures.reduce((sum, temp) => sum + temp, 0); // Sum all temperatures
+                const averageTemperature = totalTemperature / values.temperatures.length; // Calculate the average temperature
+
+                const totalLuminosity = values.luminosities.reduce((sum, lum) => sum + lum, 0); // Sum all luminosities
+                const averageLuminosity = totalLuminosity / values.luminosities.length; // Calculate the average luminosity
+
+                return {
+                    date,
+                    averageTemperature: averageTemperature.toFixed(2), // Round to 2 decimal places
+                    averageLuminosity: averageLuminosity.toFixed(2) // Round to 2 decimal places
+                };
+            });
+
+            return dailyAverages;
+        }
 
         // Call fetchdata.php every 1.5 seconds
         setInterval(callFetchData, 1100);
@@ -252,6 +386,8 @@ $conn = Connect();
         setInterval(updateChart, 1200);
     </script>
 
+        fetchHistoryTemp();
+    </script>
 
     <script>
         window.addEventListener('resize', () => {
@@ -275,9 +411,8 @@ $conn = Connect();
             /* Ensure it scales down responsively */
             margin: auto;
             /* Center the box horizontally */
-            height: 475px;
+            height: 500px;
         }
-
 
         #realTimeChart {
             width: 100% !important;

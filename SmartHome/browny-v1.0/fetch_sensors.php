@@ -11,4 +11,3 @@ if ($result->num_rows > 0) {
     $data = $result->fetch_assoc(); // Fetch the single latest row as an associative array
 }
 echo json_encode($data); // Return the data in JSON format
-?>

@@ -1,0 +1,31 @@
+.Containerr{
+    background-color: rgb(0, 0, 0);
+    width: 50%;
+    border: 1px solid black;
+    margin: auto;
+    margin-top: 120px;
+    border-radius: 10px;
+}
+
+.Containerr h1{
+    margin-left: 20px;
+    font-size: 2em;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    color: white;
+}
+
+.eventt-block{
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(255, 255, 255);
+    width: 80%;
+    margin: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.constraint{
+    display: flex;
+    gap: 20px;
+}

@@ -1,7 +1,7 @@
 <?php
 $apiKey = "aio_eKEI39ToPIcKaNgfs6mN5WV1mbs7";
 $feedName = "Light level";
-$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level"; 
+$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level";
 $url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
 $url2 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/movement";
 #light
@@ -55,20 +55,19 @@ foreach ($data as $item) {
     $pres = $data2["last_value"];
 
     if ($pres === "Yes") {
-        $pres =1 ;
+        $pres = 1;
     } elseif ($pres === "No") {
         $pres = 0;
     } else {
         $pres = -1;
     }
-    
-    
+
+
 
     $stmt = $mysqli->prepare("INSERT INTO sensors (RID,DateTime,Luminosity, Temperature,Presence) VALUES (1,?,?,?, ?)");
-    $stmt->bind_param("sddd", $datetime,$lum,$temp,$pres);
+    $stmt->bind_param("sddd", $datetime, $lum, $temp, $pres);
     $stmt->execute();
 }
 $stmt->close();
 $mysqli->close();
- echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);
-?>
+echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);
