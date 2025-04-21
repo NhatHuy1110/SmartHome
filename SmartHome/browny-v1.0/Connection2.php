@@ -2,7 +2,7 @@
 class DBConn
 {
 
-    private $DBHOST = 'localhost';
+    private $DBHOST = 'localhost:3307';
     private $DBUSER = 'root';
     private $DBPASS = '';
     private $DBNAME = 'smarthome';
