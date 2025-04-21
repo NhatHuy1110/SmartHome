@@ -22,6 +22,7 @@ $(document).ready(function () {
                     } else {
                         counter = notificationData.length
                     }
+
                     prevNotifNum = notificationData.length // do not remove this
 
                     localStorage.setItem('counter', counter); // Update localStorage

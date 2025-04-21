@@ -3,6 +3,7 @@ use SmartHome;
 
 CREATE TABLE User (
 	UID INT PRIMARY KEY,
+	Username VARCHAR(255),
 	Password VARCHAR(255)
 );
 
@@ -171,7 +172,7 @@ END;
 DELIMITER ;
 
 
-INSERT INTO User (UID, Password) VALUES (1, 'password123'), (2, 'securepass');
+INSERT INTO User (UID, Password) VALUES (1,'username1', 'password123'), (2,'username2', 'securepass');
 
 INSERT INTO Room (RID, DateTime, Luminosity, Temperature, Presence) VALUES
 (1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
