@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php 
-session_start(); 
+<?php
+session_start();
 require 'Connection.php';
 $conn = Connect();
-$api_key = "aio_XfML97kADZD0Gcq2n9vfIrQHp3x2"; // Replace with your Adafruit IO API Key
+$api_key = "aio_xuJo80uSQdTMHREJriV43dcBIrEY"; // Replace with your Adafruit IO API Key
 $feed_url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
 $feed_url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
 
@@ -131,14 +131,14 @@ curl_close($ch);
 
     <div class="clearfix"></div>
 
-    <section> 
+    <section>
         <!-- Display area -->
 
         <div class="page">
             <!-- Left side: Data boxes and chart -->
             <div class="left-section">
                 <div class="data-container">
-                   <div class="data-square">
+                    <div class="data-square">
                         <h3 class="data-label">Luminosity</h3>
                         <p id="luminosity" class="data-value"></p>
                     </div>
@@ -230,7 +230,7 @@ curl_close($ch);
 
 
                 </div>
-                
+
             </div>
         </div>
 
@@ -289,11 +289,18 @@ curl_close($ch);
 
 
             // Save inputs to object and localStorage
-            inputs = { lightThreshold, lightLevel,higherLightPower, fanThreshold, fanLevel ,lowerFanPower};
+            inputs = {
+                lightThreshold,
+                lightLevel,
+                higherLightPower,
+                fanThreshold,
+                fanLevel,
+                lowerFanPower
+            };
             localStorage.setItem('inputs', JSON.stringify(inputs));
 
-            localStorage.setItem('isLightAdjusted',NaN);
-            localStorage.setItem('isFanAdjusted',NaN);
+            localStorage.setItem('isLightAdjusted', NaN);
+            localStorage.setItem('isFanAdjusted', NaN);
 
             // Hide input box and display inputs
             inputBoxContainer.classList.add('hidden');
@@ -309,7 +316,7 @@ curl_close($ch);
             localStorage.removeItem('isLightAdjusted');
             localStorage.removeItem('isFanAdjusted');
             localStorage.removeItem('autoAgain');
-            
+
 
             // Remove displayed inputs and reset toggle
             inputDisplay.innerHTML = '';
@@ -321,7 +328,14 @@ curl_close($ch);
 
         // Function to display inputs
         function displayInputs() {
-            const { lightThreshold, lightLevel, higherLightPower, fanThreshold, fanLevel, lowerFanPower} = inputs;
+            const {
+                lightThreshold,
+                lightLevel,
+                higherLightPower,
+                fanThreshold,
+                fanLevel,
+                lowerFanPower
+            } = inputs;
 
             if (Object.keys(inputs).length > 0) {
                 inputDisplay.innerHTML = `
@@ -358,29 +372,32 @@ curl_close($ch);
 
         // Update the displayed value in real-time
         let debounceTimer;
+
         function handleSliderInput() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 valueDisplay.textContent = slider.value;
 
                 fetch('proxy.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({ value: slider.value })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.text(); // Parse the response
-                    } else {
-                        console.error('Error updating Fan Power:', response.statusText);
-                    }
-                })
-                .then(data => {
-                    console.log('Server response:', data);
-                })
-                .catch(error => console.error('Error sending data to Adafruit IO:', error));
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            value: slider.value
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text(); // Parse the response
+                        } else {
+                            console.error('Error updating Fan Power:', response.statusText);
+                        }
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                    })
+                    .catch(error => console.error('Error sending data to Adafruit IO:', error));
 
             }, 300); // Delay fetch requests by 300ms
         }
@@ -392,29 +409,32 @@ curl_close($ch);
 
         // Update the displayed value in real-time
         let debounceTimer1;
+
         function handleSliderInput1() {
             clearTimeout(debounceTimer1);
             debounceTimer1 = setTimeout(() => {
                 valueDisplay1.textContent = slider1.value;
 
                 fetch('proxy1.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({ value: slider1.value })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.text(); // Parse the response
-                    } else {
-                        console.error('Error updating Fan Power:', response.statusText);
-                    }
-                })
-                .then(data => {
-                    console.log('Server response:', data);
-                })
-                .catch(error => console.error('Error sending data to Adafruit IO:', error));
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            value: slider1.value
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text(); // Parse the response
+                        } else {
+                            console.error('Error updating Fan Power:', response.statusText);
+                        }
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                    })
+                    .catch(error => console.error('Error sending data to Adafruit IO:', error));
 
             }, 300); // Delay fetch requests by 300ms
         }
@@ -428,8 +448,7 @@ curl_close($ch);
             type: 'line',
             data: {
                 labels: [], // Time labels will be added dynamically
-                datasets: [
-                    {
+                datasets: [{
                         label: 'Temperature (°C)',
                         data: [], // Temperature data will be added dynamically
                         borderColor: 'rgba(255, 99, 132, 1)',
@@ -450,15 +469,21 @@ curl_close($ch);
             options: {
                 scales: {
                     x: {
-                        title: { display: true, text: 'Time' }
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
                     },
                     y: {
-                        title: { display: true, text: 'Value' }
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
                     }
                 }
             }
-        }); 
-         
+        });
+
         // Function to call fetchdata.php and log the response
         function callFetchData() {
             fetch('fetchdata.php') // Call fetchdata.php
@@ -474,38 +499,45 @@ curl_close($ch);
         // Function to fetch sensor data and dynamically update the elements
         function fetchLatestSensorData() {
             fetch('fetch_sensors.php') // Send AJAX request
-            .then(response => response.json()) // Parse JSON response
-            .then(data => {
-                // Dynamically update the display elements
-                document.getElementById('luminosity').textContent = (data.Luminosity || 'N/A') + ' LUX';
-                document.getElementById('temperature').textContent = (data.Temperature || 'N/A') + ' (°C)';
+                .then(response => response.json()) // Parse JSON response
+                .then(data => {
+                    // Dynamically update the display elements
+                    document.getElementById('luminosity').textContent = (data.Luminosity || 'N/A') + ' LUX';
+                    document.getElementById('temperature').textContent = (data.Temperature || 'N/A') + ' (°C)';
 
-                if (data.Presence === "0") {
-                    document.getElementById('presence').textContent = "No";
-                } else if (data.Presence === "1") {
-                    document.getElementById('presence').textContent = "Yes";
-                } else {
-                    document.getElementById('presence').textContent = "N/A";
-                }
+                    if (data.Presence === "0") {
+                        document.getElementById('presence').textContent = "No";
+                    } else if (data.Presence === "1") {
+                        document.getElementById('presence').textContent = "Yes";
+                    } else {
+                        document.getElementById('presence').textContent = "N/A";
+                    }
 
-                let Light = Number(data.Luminosity);
-                let Temp = Number(data.Temperature);
-                let toggleState = localStorage.getItem('automaticToggleState') === 'true'; // Retrieve toggle state
+                    let Light = Number(data.Luminosity);
+                    let Temp = Number(data.Temperature);
+                    let toggleState = localStorage.getItem('automaticToggleState') === 'true'; // Retrieve toggle state
 
-                if(toggleState){
-                  handleLightAndFanSettings(Light, Temp);
-                }
+                    if (toggleState) {
+                        handleLightAndFanSettings(Light, Temp);
+                    }
 
-            })
-            .catch(error => console.error('Error fetching sensor data:', error)); // Handle errors
-            
+                })
+                .catch(error => console.error('Error fetching sensor data:', error)); // Handle errors
+
         }
 
         // Initialize flags from localStorage or default to false
 
         function handleLightAndFanSettings(Light, Temp) {
-            let { lightThreshold: LightT, lightLevel: LightL, higherLightPower:HLightP, fanThreshold: FanT, fanLevel: FanL, lowerFanPower:LFanP } = inputs;
-//             const { lightThreshold, lightLevel, higherLightPower, fanThreshold, fanLevel, lowerFanPower} = inputs;
+            let {
+                lightThreshold: LightT,
+                lightLevel: LightL,
+                higherLightPower: HLightP,
+                fanThreshold: FanT,
+                fanLevel: FanL,
+                lowerFanPower: LFanP
+            } = inputs;
+            //             const { lightThreshold, lightLevel, higherLightPower, fanThreshold, fanLevel, lowerFanPower} = inputs;
             LightT = Number(LightT);
             LightL = Number(LightL);
             HLightP = Number(HLightP);
@@ -522,83 +554,99 @@ curl_close($ch);
             let higherLight = Light > LightT && (LightAdjustState || LightAdjustNaN || Again);
             let higherFan = Temp >= FanT && (!FanAdjustState || FanAdjustNaN || Again);
             let lowerFan = Temp < FanT && (FanAdjustState || FanAdjustNaN || Again);
-            console.log(lowerLight, higherLight,higherFan, lowerFan, Again);
+            console.log(lowerLight, higherLight, higherFan, lowerFan, Again);
 
             if (!isNaN(LightT) && !isNaN(LightL) && !isNaN(HLightP)) {
 
                 if (lowerLight) {
                     fetch('proxy1.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ value: LightL })
-                    })
-                    .then(() => {
-                        console.log("Light adjusted to level:", LightL);
-                        slider1.removeEventListener('input', handleSliderInput1);
-                        // Update slider dynamically
-                        slider1.value = LightL;
-                        valueDisplay1.textContent = slider1.value;
-                        localStorage.setItem('isLightAdjusted', 'true'); // Persist flag
-                        localStorage.setItem('autoAgain', 'false');
-                        //add back event listener
-                        slider1.addEventListener('input', handleSliderInput1);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                value: LightL
+                            })
+                        })
+                        .then(() => {
+                            console.log("Light adjusted to level:", LightL);
+                            slider1.removeEventListener('input', handleSliderInput1);
+                            // Update slider dynamically
+                            slider1.value = LightL;
+                            valueDisplay1.textContent = slider1.value;
+                            localStorage.setItem('isLightAdjusted', 'true'); // Persist flag
+                            localStorage.setItem('autoAgain', 'false');
+                            //add back event listener
+                            slider1.addEventListener('input', handleSliderInput1);
+                        });
                 } else if (higherLight) {
                     fetch('proxy1.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ value: HLightP })
-                    })
-                    .then(() => {
-                        console.log("Light adjusted to level:", HLightP);
-                        // Temporarily disable the listener
-                        slider1.removeEventListener('input', handleSliderInput1);
-                        // Update slider dynamically
-                        slider1.value = HLightP;
-                        valueDisplay1.textContent = slider1.value;
-                        localStorage.setItem('isLightAdjusted', 'false'); // Persist flag
-                        localStorage.setItem('autoAgain', 'false');
-                        //add back event listener
-                        slider1.addEventListener('input', handleSliderInput1);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                value: HLightP
+                            })
+                        })
+                        .then(() => {
+                            console.log("Light adjusted to level:", HLightP);
+                            // Temporarily disable the listener
+                            slider1.removeEventListener('input', handleSliderInput1);
+                            // Update slider dynamically
+                            slider1.value = HLightP;
+                            valueDisplay1.textContent = slider1.value;
+                            localStorage.setItem('isLightAdjusted', 'false'); // Persist flag
+                            localStorage.setItem('autoAgain', 'false');
+                            //add back event listener
+                            slider1.addEventListener('input', handleSliderInput1);
+                        });
                 }
             }
 
             if (!isNaN(FanT) && !isNaN(FanL) && !isNaN(LFanP)) {
                 if (higherFan) {
                     fetch('proxy.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ value: FanL })
-                    })
-                    .then(() => {
-                        console.log("Fan adjusted to level:", FanL);
-                        slider.removeEventListener('input', handleSliderInput);
-                        // Update slider dynamically
-                        slider.value = FanL;
-                        valueDisplay.textContent = slider.value;
-                        localStorage.setItem('isFanAdjusted', 'true'); // Persist flag
-                        localStorage.setItem('autoAgain', 'false');
-                        //add back event listener
-                        slider.addEventListener('input', handleSliderInput);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                value: FanL
+                            })
+                        })
+                        .then(() => {
+                            console.log("Fan adjusted to level:", FanL);
+                            slider.removeEventListener('input', handleSliderInput);
+                            // Update slider dynamically
+                            slider.value = FanL;
+                            valueDisplay.textContent = slider.value;
+                            localStorage.setItem('isFanAdjusted', 'true'); // Persist flag
+                            localStorage.setItem('autoAgain', 'false');
+                            //add back event listener
+                            slider.addEventListener('input', handleSliderInput);
+                        });
                 } else if (lowerFan) {
                     fetch('proxy.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ value: LFanP })
-                    })
-                    .then(() => {
-                        console.log("Fan adjusted to level:", LFanP);
-                        slider.removeEventListener('input', handleSliderInput);
-                        // Update slider dynamically
-                        slider.value = LFanP;
-                        valueDisplay.textContent = slider.value;
-                        localStorage.setItem('isFanAdjusted', 'false'); // Persist flag
-                        localStorage.setItem('autoAgain', 'false');
-                        //add back event listener
-                        slider.addEventListener('input', handleSliderInput);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                value: LFanP
+                            })
+                        })
+                        .then(() => {
+                            console.log("Fan adjusted to level:", LFanP);
+                            slider.removeEventListener('input', handleSliderInput);
+                            // Update slider dynamically
+                            slider.value = LFanP;
+                            valueDisplay.textContent = slider.value;
+                            localStorage.setItem('isFanAdjusted', 'false'); // Persist flag
+                            localStorage.setItem('autoAgain', 'false');
+                            //add back event listener
+                            slider.addEventListener('input', handleSliderInput);
+                        });
                 }
             }
         }
@@ -612,7 +660,7 @@ curl_close($ch);
             fetch('fetch_sensors.php') // Make a request to your backend
                 .then(response => response.json())
                 .then(data => {
-                    const now = data.DateTime || 'N/A';//new Date().toLocaleTimeString(); // Get current time
+                    const now = data.DateTime || 'N/A'; //new Date().toLocaleTimeString(); // Get current time
 
                     // Check if the data has changed
                     if (
@@ -630,7 +678,7 @@ curl_close($ch);
 
                         // Update the datasets
                         realTimeChart.data.datasets[0].data.push(data.Temperature || 0); // Add temperature
-                        realTimeChart.data.datasets[1].data.push(data.Luminosity || 0);  // Add luminosity
+                        realTimeChart.data.datasets[1].data.push(data.Luminosity || 0); // Add luminosity
 
                         // Update the chart
                         realTimeChart.update();
@@ -771,7 +819,7 @@ curl_close($ch);
 
             return dailyAverages;
         }
-       
+
         // Call fetchdata.php every 1.5 seconds
         setInterval(callFetchData, 1500);
 
@@ -782,20 +830,19 @@ curl_close($ch);
         setInterval(updateChart, 1600);
 
         fetchHistoryTemp();
-
     </script>
 
 
     <!-- Include jQuery and Bootstrap JS -->
-   
-	<script>
+
+    <script>
         window.addEventListener('resize', () => {
-        realTimeChart.resize(); // Trigger Chart.js to resize dynamically
+            realTimeChart.resize(); // Trigger Chart.js to resize dynamically
         });
-        src="https://code.jquery.com/jquery-3.6.0.min.js"
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+        src = "https://code.jquery.com/jquery-3.6.0.min.js"
+        src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
         window.addEventListener('resize', () => {
-        realTimeChart.resize(); // Trigger Chart.js to resize dynamically
+            realTimeChart.resize(); // Trigger Chart.js to resize dynamically
         });
         $(document).ready(function() {
             $('#navbar-menu').on('show.bs.collapse', function() {

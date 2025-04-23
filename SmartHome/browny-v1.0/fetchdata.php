@@ -1,6 +1,6 @@
 <?php
-$apiKey = "aio_XfML97kADZD0Gcq2n9vfIrQHp3x2";
-$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level"; 
+$apiKey = "aio_xuJo80uSQdTMHREJriV43dcBIrEY";
+$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level";
 $url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
 $url2 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/movement";
 
@@ -64,4 +64,3 @@ $stmt->close();
 $mysqli->close();
 
 echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);
-?>
