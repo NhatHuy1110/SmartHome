@@ -4,7 +4,44 @@
 session_start();
 require 'Connection.php';
 $conn = Connect();
+<<<<<<< Updated upstream
 
+=======
+$apiKey = "aio_HROE3394I9v65rEHAWHpeVc3AdQb"; // Replace with your Adafruit IO API Key
+$feed_url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
+$feed_url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $feed_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "X-AIO-Key: $apiKey"
+));
+
+$response = curl_exec($ch);
+if (curl_errno($ch)) {
+    echo 'Error fetching data: ' . curl_error($ch);
+} else {
+    $data = json_decode($response, true);
+    $latest_value = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+}
+
+curl_setopt($ch, CURLOPT_URL, $feed_url1);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "X-AIO-Key: $apiKey"
+));
+
+$response = curl_exec($ch);
+if (curl_errno($ch)) {
+    echo 'Error fetching data: ' . curl_error($ch);
+} else {
+    $data = json_decode($response, true);
+    $latest_value1 = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+}
+
+curl_close($ch);
+>>>>>>> Stashed changes
 ?>
 
 <head>

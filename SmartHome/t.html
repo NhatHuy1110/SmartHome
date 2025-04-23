@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Log Default Dropdown Value</title>
+  <script>
+    function handleDropdownChange() {
+      const dropdown = document.getElementById("menu");
+      const selectedValue = dropdown.value;
+      console.log("Selected value: " + selectedValue);
+    }
+    const date = new Date();
+    console.log(date.toISOString().split("T")[0]);
+    console.log(date);
+
+    // Automatically log the value on page load
+    window.onload = () => {
+      handleDropdownChange();
+    };
+  </script>
+</head>
+
+<body>
+  <h2>Select an Option:</h2>
+  <select id="menu" name="menu" onchange="handleDropdownChange()">
+    <option value="option1">Option 1</option>
+    <option value="option2">Option 2</option>
+    <option value="option3">Option 3</option>
+  </select>
+</body>
+
+</html>

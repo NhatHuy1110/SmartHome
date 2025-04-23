@@ -1,7 +1,12 @@
 <?php
+<<<<<<< Updated upstream
 $apiKey = "aio_eKEI39ToPIcKaNgfs6mN5WV1mbs7";
 $feedName = "Light level";
 $url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level"; 
+=======
+$apiKey = "aio_HROE3394I9v65rEHAWHpeVc3AdQb";
+$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level";
+>>>>>>> Stashed changes
 $url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
 $url2 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/movement";
 #light
@@ -38,8 +43,12 @@ curl_close($ch2);
 $data2 = json_decode($response2, true);
 print_r($data2);
 
+<<<<<<< Updated upstream
 $mysqli = new mysqli("localhost:3307", "root", "", "smarthome");
 
+=======
+$mysqli = new mysqli("localhost:3306", "root", "", "smarthome");
+>>>>>>> Stashed changes
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
