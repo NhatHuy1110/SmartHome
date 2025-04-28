@@ -4,16 +4,14 @@
 session_start();
 require 'Connection.php';
 $conn = Connect();
-$api_key = "aio_xuJo80uSQdTMHREJriV43dcBIrEY"; // Replace with your Adafruit IO API Key
+$api_key = "aio_itBH53rzbfnwfhiabK1R9p2mAOKx"; // Replace with your Adafruit IO API Key
 $feed_url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
 $feed_url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $feed_url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    "X-AIO-Key: $api_key"
-));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $api_key"));
 
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
@@ -25,9 +23,7 @@ if (curl_errno($ch)) {
 
 curl_setopt($ch, CURLOPT_URL, $feed_url1);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    "X-AIO-Key: $api_key"
-));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $api_key"));
 
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
@@ -110,6 +106,7 @@ curl_close($ch);
                     <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                         <li class=" smooth-menu active"></li>
                         <li><a href="Dash_Board.php">Dash Board</a></li>
+                        <li><a href="log.php">Log</a></li>
                         <li><a href="Event.php">Event</a></li>
                         <li><a href="Profile.php">Profile</a></li>
                         <li><a href="Logout.php">Logout</a></li>
@@ -130,6 +127,7 @@ curl_close($ch);
     </div><!--/.header-area-->
 
     <div class="clearfix"></div>
+
 
     <section>
         <!-- Display area -->
@@ -233,6 +231,7 @@ curl_close($ch);
 
             </div>
         </div>
+
 
     </section>
 
