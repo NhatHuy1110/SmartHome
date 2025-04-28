@@ -89,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                     <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                         <li class=" smooth-menu active"></li>
                         <li><a href="Dash_Board.php">Dash Board</a></li>
+                        <li><a href="log.php">Log</a></li>
                         <li><a href="Event.php">Event</a></li>
                         <li><a href="Profile.php">Profile</a></li>
                         <li><a href="Logout.php">Logout</a></li>

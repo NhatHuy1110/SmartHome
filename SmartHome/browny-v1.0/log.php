@@ -1,12 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-session_start();
-require 'Connection.php';
-$conn = Connect();
+// Establish database connection
+$mysqli = new mysqli("localhost:3307", "root", "", "SmartHome");
+
+// Check connection
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+
+// Fetch data from Sensors table
+$sensorsQuery = "SELECT * FROM Sensors ORDER BY DateTime DESC LIMIT 10";
+$sensorsResult = $mysqli->query($sensorsQuery);
+
+// Fetch data from Fan table
+$fanQuery = "SELECT * FROM Fan ORDER BY DateTime DESC LIMIT 10";
+$fanResult = $mysqli->query($fanQuery);
+
+// Fetch data from Light table
+$lightQuery = "SELECT * FROM Light ORDER BY DateTime DESC LIMIT 10";
+$lightResult = $mysqli->query($lightQuery);
 
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,11 +59,15 @@ $conn = Connect();
 
     <!-- Responsive.css -->
     <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://kit.fontawesome.com/6b23de7647.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="notifHandler.js"></script>
-    <title>Profile</title>
 
+    <title>Database Logs</title>
 </head>
 
 <body>
@@ -93,100 +112,98 @@ $conn = Connect();
 
     <div class="clearfix"></div>
 
-    <!--about start -->
-		<section id="about" class="about">
-			<div class="section-heading text-center">
-				<h2>about me</h2>
-			</div>
-			<div class="container">
-				<div class="about-content">
-					<div class="row">
-						<div class="col-sm-6">
-							<div class="single-about-txt">
-								<p>
-									Xin chào, tôi là Nguyễn Nhất Huy, nhóm trưởng của nhóm 1 trong môn đồ án đa ngành. Trong dự án này, tôi và nhóm của mình đã phát triển một ứng dụng SmartHome, với mục tiêu giúp người dùng điều khiển và giám sát các thiết bị trong nhà thông qua một nền tảng trực tuyến. Ứng dụng của chúng tôi không chỉ đơn giản hóa việc quản lý các thiết bị thông minh mà còn mang lại trải nghiệm người dùng tiện lợi, an toàn và dễ dàng sử dụng.
-								</p>
-								<div class="row">
-									<div class="col-sm-4">
-										<div class="single-about-add-info">
-											<h3>phone</h3>
-											<p>0782592***</p>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="single-about-add-info">
-											<h3>email</h3>
-											<p>huy@gmail.com</p>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="single-about-add-info">
-											<h3>website</h3>
-											<p>www.nnhuy.com</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-offset-1 col-sm-5">
-							<div class="single-about-img">
-								<img src="assets/images/about/profile_image.jpg" alt="profile_image">
-								<div class="about-list-icon">
-									<ul>
-										<li>
-											<a href="#">
-												<i  class="fa fa-facebook" aria-hidden="true"></i>
-											</a>
-										</li><!-- / li -->
-										<li>
-											<a href="#">
-												<i  class="fa fa-dribbble" aria-hidden="true"></i>
-											</a>
-											
-										</li><!-- / li -->
-										<li>
-											<a href="#">
-												<i  class="fa fa-twitter" aria-hidden="true"></i>
-											</a>
-											
-										</li><!-- / li -->
-										<li>
-											<a href="#">
-												<i  class="fa fa-linkedin" aria-hidden="true"></i>
-											</a>
-										</li><!-- / li -->
-										<li>
-											<a href="#">
-												<i  class="fa fa-instagram" aria-hidden="true"></i>
-											</a>
-										</li><!-- / li -->
-										
-										
-									</ul><!-- / ul -->
-								</div><!-- /.about-list-icon -->
+    <div class="container" style = "margin-top: 100px;">
+        <h2>Sensors Table</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>RID</th>
+                    <th>DateTime</th>
+                    <th>Luminosity</th>
+                    <th>Temperature</th>
+                    <th>Presence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($sensorsResult->num_rows > 0) {
+                    while ($row = $sensorsResult->fetch_assoc()) {
+                        echo "<tr>
+                                <td>{$row['RID']}</td>
+                                <td>{$row['DateTime']}</td>
+                                <td>{$row['Luminosity']}</td>
+                                <td>{$row['Temperature']}</td>
+                                <td>" . ($row['Presence'] ? 'Yes' : 'No') . "</td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5'>No data available</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
 
-							</div>
+        <h2>Fan Table</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>RID</th>
+                    <th>FID</th>
+                    <th>DateTime</th>
+                    <th>Fan Speed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($fanResult->num_rows > 0) {
+                    while ($row = $fanResult->fetch_assoc()) {
+                        echo "<tr>
+                                <td>{$row['RID']}</td>
+                                <td>{$row['FID']}</td>
+                                <td>{$row['DateTime']}</td>
+                                <td>{$row['Fan_Speed']}</td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='4'>No data available</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</section><!--/.about-->
-		<!--about end -->
-
-
-    <!-- Include jQuery and Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#navbar-menu').on('show.bs.collapse', function() {
-                $(this).css('height', 'auto'); // Set height dynamically
-            });
-        });
-    </script>
-
+        <h2>Light Table</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>RID</th>
+                    <th>LID</th>
+                    <th>DateTime</th>
+                    <th>Intensity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($lightResult->num_rows > 0) {
+                    while ($row = $lightResult->fetch_assoc()) {
+                        echo "<tr>
+                                <td>{$row['RID']}</td>
+                                <td>{$row['LID']}</td>
+                                <td>{$row['DateTime']}</td>
+                                <td>{$row['Intensity']}</td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='4'>No data available</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
 
 </body>
-
 </html>
+
+<?php
+// Close the database connection
+$mysqli->close();
+?>
