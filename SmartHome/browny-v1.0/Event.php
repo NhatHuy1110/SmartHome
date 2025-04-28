@@ -2,6 +2,7 @@
 <html lang="en">
 <?php
 session_start();
+#echo $_SESSION['uid'] ?? 'UID not set';
 require 'Connection.php';
 $conn = Connect();
 
@@ -129,6 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
             <label for="start-time">Start Time:</label>
             <input type="time" id="start-time" name="start-time" required />
 
+            <label for="duration">Duration(in minutes):</label>
+            <input type="number" id="duration" name="duration" required />
+
             <label for="temp-upper">Temperature Upper:</label>
             <input type="number" id="temp-upper" name="temp-upper" required />
 
@@ -197,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                             </div>
                             <div class="event-date">Event date: ${event.EDate}</div>
                             <div class="start-time">Start time: ${event.Start_time}</div>
-                            <h2 id="erepeat">${event.ERepeat}</h2>
+                            <h2 id="e-repeat">${event.ERepeat}</h2>
                             <div class="constraint">
                                 <p>Temperature upper: ${event.Temp_Upper}</p>
                                 <p>Temperature lower: ${event.Temp_Lower}</p>
@@ -267,6 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                     EName: formData.get('event-name'),
                     EDate: formData.get('event-date'),
                     Start_time: formData.get('start-time'),
+                    Duration: formData.get('duration'),
                     Temp_Upper: formData.get('temp-upper'),
                     Temp_Lower: formData.get('temp-lower'),
                     Lum_Upper: formData.get('lum-upper'),

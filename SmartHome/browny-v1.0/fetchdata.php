@@ -106,4 +106,3 @@ $stmt->close();
 $mysqli->close();
 
 echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);
-?>

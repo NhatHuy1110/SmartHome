@@ -2,13 +2,13 @@ create database SmartHome;
 use SmartHome;
 
 CREATE TABLE User (
-	UID INT PRIMARY KEY,
+	UID INT AUTO_INCREMENT PRIMARY KEY,
 	Username VARCHAR(255),
 	Password VARCHAR(255)
 );
 
 CREATE TABLE Event (
-	EID INT PRIMARY KEY,
+	EID INT AUTO_INCREMENT PRIMARY KEY,
 	UID INT,
 	EName VARCHAR(255),
 	EDate DATE NOT NULL,
@@ -123,7 +123,7 @@ BEGIN
     DECLARE lum_error TEXT;
 
     -- Check if there is a related event for the room
-    SELECT COUNT(*), EID INTO event_count, event_eid
+    SELECT COUNT(*), E.EID INTO event_count, event_eid
     FROM At A
     JOIN Event E ON A.EID = E.EID
     WHERE A.RID = NEW.RID
@@ -169,14 +169,18 @@ BEGIN
     END IF;
 END;
 //
-DELIMITER ;
 
+DELIMITER ;
 
 INSERT INTO User (UID,Username, Password) VALUES (1,'username1', 'password123'), (2,'username2', 'securepass');
 
 INSERT INTO Room (RID, DateTime, Luminosity, Temperature, Presence) VALUES
 (1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
 
+INSERT INTO Event (UID, EName, EDate, Start_Time, Duration, ERepeat, Temp_Upper, Temp_Lower, Lum_Upper, Lum_Lower)
+VALUES (1, 'Morning Routine', '2025-04-25', '08:00:00', 0, 'Daily', 26.0, 20.0, 70.0, 30.0);
+
+INSERT INTO At (EID, RID) VALUES (1, 1);
 
 INSERT INTO sensors (RID, DateTime, Luminosity, Temperature, Presence) VALUES
 (1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);

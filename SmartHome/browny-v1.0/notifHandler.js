@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 
     $('.notification').load('Notification.php');
