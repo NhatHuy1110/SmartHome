@@ -39,7 +39,7 @@ $lightData = $db->selectWhere(
 );
 
 // Close the database connection
-$db->close();
+//$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">

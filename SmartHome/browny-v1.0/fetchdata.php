@@ -112,6 +112,6 @@ $lightData = [
 $lightId = $db->insert('light', $lightData, "iisd");
 
 // Close the database connection
-$db->close();
+//$db->close();
 
 echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);

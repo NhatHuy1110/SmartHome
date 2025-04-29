@@ -40,4 +40,4 @@ if (isset($_POST['dateStart']) && isset($_POST['dateEnd'])) {
     echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
 }
 
-$conn->close(); // Close the database connection
+//$conn->close(); // Close the database connection

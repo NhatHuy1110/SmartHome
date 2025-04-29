@@ -23,7 +23,7 @@ CREATE TABLE Event (
 );
 
 CREATE TABLE Notification (
-	NID INT,
+	NID INT AUTO_INCREMENT,
 	EID INT,
 	DateTime DATETIME NOT NULL,
 	Error_Message TEXT,
