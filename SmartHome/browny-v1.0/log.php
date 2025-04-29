@@ -1,27 +1,49 @@
 <?php
-// Establish database connection
-$mysqli = new mysqli("localhost:3307", "root", "", "SmartHome");
+// Include the Connection2.php file
+require_once 'Connection2.php';
 
-// Check connection
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+// Create an instance of DBConn
+$db = new DBConn();
 
-// Fetch data from Sensors table
-$sensorsQuery = "SELECT * FROM Sensors ORDER BY DateTime DESC LIMIT 10";
-$sensorsResult = $mysqli->query($sensorsQuery);
+// Fetch data from Sensors table (last 10 rows, ordered by DateTime)
+$sensorsData = $db->selectWhere(
+    'Sensors',
+    [],
+    'DateTime',
+    10,
+    'DESC',
+    '',
+    []
+);
 
-// Fetch data from Fan table
-$fanQuery = "SELECT * FROM Fan ORDER BY DateTime DESC LIMIT 10";
-$fanResult = $mysqli->query($fanQuery);
+// Fetch data from Fan table (last 10 rows, ordered by DateTime)
+$fanData = $db->selectWhere(
+    'Fan',
+    [],
+    'DateTime',
+    10,
+    'DESC',
+    '',
+    []
+);
 
-// Fetch data from Light table
-$lightQuery = "SELECT * FROM Light ORDER BY DateTime DESC LIMIT 10";
-$lightResult = $mysqli->query($lightQuery);
+// Fetch data from Light table (last 10 rows, ordered by DateTime)
+$lightData = $db->selectWhere(
+    'Light',
+    [],
+    'DateTime',
+    10,
+    'DESC',
+    '',
+    []
+);
 
+// Close the database connection
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -112,7 +134,7 @@ $lightResult = $mysqli->query($lightQuery);
 
     <div class="clearfix"></div>
 
-    <div class="container" style = "margin-top: 100px;">
+    <div class="container" style="margin-top: 100px;">
         <h2>Sensors Table</h2>
         <table class="table table-bordered">
             <thead>
@@ -126,8 +148,8 @@ $lightResult = $mysqli->query($lightQuery);
             </thead>
             <tbody>
                 <?php
-                if ($sensorsResult->num_rows > 0) {
-                    while ($row = $sensorsResult->fetch_assoc()) {
+                if ($sensorsData) {
+                    foreach ($sensorsData as $row) {
                         echo "<tr>
                                 <td>{$row['RID']}</td>
                                 <td>{$row['DateTime']}</td>
@@ -155,8 +177,8 @@ $lightResult = $mysqli->query($lightQuery);
             </thead>
             <tbody>
                 <?php
-                if ($fanResult->num_rows > 0) {
-                    while ($row = $fanResult->fetch_assoc()) {
+                if ($fanData) {
+                    foreach ($fanData as $row) {
                         echo "<tr>
                                 <td>{$row['RID']}</td>
                                 <td>{$row['FID']}</td>
@@ -183,8 +205,8 @@ $lightResult = $mysqli->query($lightQuery);
             </thead>
             <tbody>
                 <?php
-                if ($lightResult->num_rows > 0) {
-                    while ($row = $lightResult->fetch_assoc()) {
+                if ($lightData) {
+                    foreach ($lightData as $row) {
                         echo "<tr>
                                 <td>{$row['RID']}</td>
                                 <td>{$row['LID']}</td>
@@ -201,9 +223,5 @@ $lightResult = $mysqli->query($lightQuery);
     </div>
 
 </body>
-</html>
 
-<?php
-// Close the database connection
-$mysqli->close();
-?>
+</html>

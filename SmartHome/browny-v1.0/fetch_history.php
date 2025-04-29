@@ -1,7 +1,8 @@
 <?php
 session_start();
-require 'Connection.php'; // Include database connection
-$conn = Connect();
+require 'Connection2.php'; // Use DBConn-based connection
+$db = new DBConn();
+$conn = $db->getConnection();
 
 header('Content-Type: application/json'); // Set the content type to JSON
 

@@ -1,8 +1,6 @@
 <!doctype html>
 <?php
 session_start();
-require 'Connection.php';
-$conn = Connect();
 ?>
 <html class="no-js" lang="en">
 
@@ -87,27 +85,30 @@ $conn = Connect();
                 <!-- End Header Navigation -->
                 <?php
                 if (isset($_SESSION['login_customer'])) {
+                    require 'Connection2.php';
+                    $db = new DBConn();
+                    $conn = $db->getConnection();
                 ?>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class=" smooth-menu active"></li>
-                        <li><a href="Dash_Board.php">Dash Board</a></li>
-                        <li><a href="log.php">Log</a></li>
-                        <li><a href="Event.php">Event</a></li>
-                        <li><a href="Profile.php">Profile</a></li>
-                        <li><a href="Logout.php">Logout</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle text-light" id="numUnseen" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
-                                <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
-                                <i class="fas fa-bell" style="font-size: 20px;"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <div class="notification" style="max-height: 200px; overflow-y: auto;"></div>
-                            </div>
-                        </li>
-                    </ul><!--/.nav -->
-                </div><!-- /.navbar-collapse -->
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                        <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                            <li class=" smooth-menu active"></li>
+                            <li><a href="Dash_Board.php">Dash Board</a></li>
+                            <li><a href="log.php">Log</a></li>
+                            <li><a href="Event.php">Event</a></li>
+                            <li><a href="Profile.php">Profile</a></li>
+                            <li><a href="Logout.php">Logout</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle text-light" id="numUnseen" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
+                                    <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
+                                    <i class="fas fa-bell" style="font-size: 20px;"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="notification" style="max-height: 200px; overflow-y: auto;"></div>
+                                </div>
+                            </li>
+                        </ul><!--/.nav -->
+                    </div><!-- /.navbar-collapse -->
                 <?php
                 } else {
                 ?>

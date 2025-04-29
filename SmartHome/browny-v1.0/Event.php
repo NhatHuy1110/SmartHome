@@ -3,9 +3,11 @@
 <?php
 session_start();
 #echo $_SESSION['uid'] ?? 'UID not set';
-require 'Connection.php';
-$conn = Connect();
+require 'Connection2.php'; // Use the DBConn class
 
+$db = new DBConn();
+
+$conn = $db->getConnection();
 // Handle the toggle button status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POST['status'])) {
     $eventId = $_POST['EID'];
@@ -14,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
     // Update the event status in the database
     $query = "UPDATE event SET Status = ? WHERE EID = ?";
     $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Failed to prepare statement']);
+        exit;
+    }
     $stmt->bind_param('si', $status, $eventId);
 
     if ($stmt->execute()) {

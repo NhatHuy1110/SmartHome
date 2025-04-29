@@ -1,6 +1,9 @@
 <?php
+require_once 'Connection2.php';
+$db = new DBConn();
+
 $apiKey = "aio_itBH53rzbfnwfhiabK1R9p2mAOKx";
-$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level"; 
+$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level";
 $url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
 $url2 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/movement";
 $url3 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
@@ -78,31 +81,37 @@ print_r($dateTimeFan);
 // Use the most recent timestamp
 $dateTime = max($dateTimeLight, $dateTimeTemper, $dateTimePres);
 
-$mysqli = new mysqli("localhost:3307", "root", "", "smarthome");
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
-
-// Insert the latest data into the database
-$stmt = $mysqli->prepare("INSERT INTO sensors (RID, DateTime, Luminosity, Temperature, Presence) VALUES (1, ?, ?, ?, ?)");
-$stmt->bind_param("sddd", $dateTime, $lum, $temp, $pres);
-$stmt->execute();
-$stmt->close();
 
 
-$stmt = $mysqli->prepare("INSERT INTO fan (RID, FID, DateTime, Fan_Speed) VALUES (1, 1, ?, ?) ON DUPLICATE KEY UPDATE Fan_Speed = VALUES(Fan_Speed)");
-$stmt->bind_param("si", $dateTimeFan, $Fan);
-$stmt->execute();
-$stmt->close();
+// Insert into sensors table
+$sensorData = [
+    'RID' => 1,
+    'DateTime' => $dateTime,
+    'Luminosity' => $lum,
+    'Temperature' => $temp,
+    'Presence' => $pres
+];
+$sensorId = $db->insert('sensors', $sensorData, "isddd");
 
+// Insert into fan table (with ON DUPLICATE KEY UPDATE)
+$fanData = [
+    'RID' => 1,
+    'FID' => 1,
+    'DateTime' => $dateTimeFan,
+    'Fan_Speed' => $Fan
+];
+$fanId = $db->insert('fan', $fanData, "iisd");
 
-$stmt = $mysqli->prepare("INSERT INTO light (RID, LID, DateTime, Intensity) VALUES (1, 1, ?, ?) ON DUPLICATE KEY UPDATE Intensity = VALUES(Intensity)");
-$stmt->bind_param("sd", $dateTimeLED, $LED);
-$stmt->execute();
-$stmt->close();
+// Insert into light table (with ON DUPLICATE KEY UPDATE)
+$lightData = [
+    'RID' => 1,
+    'LID' => 1,
+    'DateTime' => $dateTimeLED,
+    'Intensity' => $LED
+];
+$lightId = $db->insert('light', $lightData, "iisd");
 
-
-
-$mysqli->close();
+// Close the database connection
+$db->close();
 
 echo json_encode(['status' => 'success', 'message' => 'Data fetched and inserted successfully']);

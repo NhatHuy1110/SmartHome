@@ -1,8 +1,11 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require 'Connection.php';
-$conn = Connect();
+// Include the Connection2.php file
+require_once 'Connection2.php';
+
+// Create an instance of DBConn
+$db = new DBConn();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['uid'])) {
@@ -27,21 +30,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $UID = $_SESSION['uid']; // Assuming user ID is stored in the session
 
         // Check for duplicate events
-        $checkQuery = "SELECT * FROM event WHERE UID = ? AND EName = ? AND EDate = ?";
-        $checkStmt = $conn->prepare($checkQuery);
-        $checkStmt->bind_param('iss', $UID, $EName, $EDate);
-        $checkStmt->execute();
+        $checkQuery = [
+            'UID' => $UID,
+            'EName' => $EName,
+            'EDate' => $EDate
+        ];
+        $checkStmt = $db->insert('sensors', $checkQuery, "iss");
         $result = $checkStmt->get_result();
 
         if ($result->num_rows > 0) {
             echo json_encode(['success' => false, 'duplicate' => true, 'message' => 'Duplicate event detected']);
         } else {
             // Insert the event into the database
-            $query = "INSERT INTO event (UID, EName, EDate, Start_time,Duration, Temp_Upper, Temp_Lower, Lum_Upper, Lum_Lower, ERepeat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('isssidddds', $UID, $EName, $EDate, $Start_time, $Duration, $Temp_Upper, $Temp_Lower, $Lum_Upper, $Lum_Lower, $ERepeat);
+            $eventData = [
+                'UID' => $UID,
+                'EName' => $EName,
+                'EDate' => $EDate,
+                'Start_time' => $Start_time,
+                'Duration' => $Duration,
+                'Temp_Upper' => $Temp_Upper,
+                'Temp_Lower' => $Temp_Lower,
+                'Lum_Upper' => $Lum_Upper,
+                'Lum_Lower' => $Lum_Lower,
+                'ERepeat' => $ERepeat
+            ];
 
-            if ($stmt->execute()) {
+            $insertId = $db->insert('event', $eventData, 'isssidddds');
+            if ($insertId) {
                 echo json_encode(['success' => true, 'message' => 'Event added successfully']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Failed to add event']);

@@ -2,8 +2,11 @@
 <html lang="en">
 <?php
 session_start();
-require 'Connection.php';
-$conn = Connect();
+require 'Connection2.php'; // Use the DBConn class
+
+$db = new DBConn();
+
+$conn = $db->getConnection();
 $api_key = "aio_itBH53rzbfnwfhiabK1R9p2mAOKx"; // Replace with your Adafruit IO API Key
 $feed_url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
 $feed_url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
