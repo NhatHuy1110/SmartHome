@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Connection2.php';
+require_once 'Connection2.php';
 $db = new DBConn();
 $conn = $db->getConnection();
 ?>
@@ -100,13 +100,6 @@ $conn = $db->getConnection();
 
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#navbar-menu').on('show.bs.collapse', function() {
-                $(this).css('height', 'auto');
-            });
-        });
-    </script>
 </body>
 
 </html>

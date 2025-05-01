@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Connection2.php'; // Use DBConn-based connection
+require_once 'Connection2.php'; // Use DBConn-based connection
 $db = new DBConn();
 $conn = $db->getConnection();
 

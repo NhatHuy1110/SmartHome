@@ -1,51 +1,45 @@
 <?php
 require_once 'Connection2.php';
+require_once 'config.php';
 $db = new DBConn();
 
-$apiKey = "aio_itBH53rzbfnwfhiabK1R9p2mAOKx";
-$url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/light-level";
-$url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/temper";
-$url2 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/movement";
-$url3 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
-$url4 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
-
 // Fetch data from light feed
-$ch = curl_init($url);
+$ch = curl_init($lightLevelFeedUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
 $response = curl_exec($ch);
 curl_close($ch);
 $data = json_decode($response, true);
 
 // Fetch data from temper feed
-$ch1 = curl_init($url1);
+$ch1 = curl_init($temperatureFeedUrl);
 curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch1, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+curl_setopt($ch1, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
 $response1 = curl_exec($ch1);
 curl_close($ch1);
 $data1 = json_decode($response1, true);
 
 // Fetch data from movement feed
-$ch2 = curl_init($url2);
+$ch2 = curl_init($motionFeedUrl);
 curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch2, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+curl_setopt($ch2, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
 $response2 = curl_exec($ch2);
 curl_close($ch2);
 $data2 = json_decode($response2, true);
 
 // Fetch data from fan feed
-$ch3 = curl_init($url3);
+$ch3 = curl_init($fanControlFeedUrl);
 curl_setopt($ch3, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch3, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+curl_setopt($ch3, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
 $response3 = curl_exec($ch3);
 curl_close($ch3);
 $data3 = json_decode($response3, true);
 
 
 // Fetch data from LED feed
-$ch4 = curl_init($url4);
+$ch4 = curl_init($ledControlFeedUrl);
 curl_setopt($ch4, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch4, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+curl_setopt($ch4, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
 $response4 = curl_exec($ch4);
 curl_close($ch4);
 $data4 = json_decode($response4, true);

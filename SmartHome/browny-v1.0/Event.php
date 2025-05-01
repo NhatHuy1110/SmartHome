@@ -3,7 +3,7 @@
 <?php
 session_start();
 #echo $_SESSION['uid'] ?? 'UID not set';
-require 'Connection2.php'; // Use the DBConn class
+require_once 'Connection2.php'; // Use the DBConn class
 
 $db = new DBConn();
 
@@ -78,43 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
 
 <body>
 
-    <div class="header-area">
-        <!-- Start Navigation -->
-        <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
-            <div class="container">
-                <!-- Start Header Navigation -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <a class="navbar-brand" href="index.php">Smart Home</a>
-                </div><!--/.navbar-header-->
-                <!-- End Header Navigation -->
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class=" smooth-menu active"></li>
-                        <li><a href="Dash_Board.php">Dash Board</a></li>
-                        <li><a href="log.php">Log</a></li>
-                        <li><a href="Event.php">Event</a></li>
-                        <li><a href="Profile.php">Profile</a></li>
-                        <li><a href="Logout.php">Logout</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle text-light" id="numUnseen" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
-                                <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
-                                <i class="fas fa-bell" style="font-size: 20px;"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <div class="notification" style="max-height: 200px; overflow-y: auto;"></div>
-                            </div>
-                        </li>
-                    </ul><!--/.nav -->
-                </div><!-- /.navbar-collapse -->
-            </div><!--/.container-->
-        </nav><!--/nav-->
-        <!-- End Navigation -->
-    </div><!--/.header-area-->
+    <?php include 'navbar.php'; ?>
 
     <div class="clearfix"></div>
 
@@ -169,13 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
     <!-- Include jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#navbar-menu').on('show.bs.collapse', function() {
-                $(this).css('height', 'auto'); // Set height dynamically
-            });
-        });
-    </script>
 
     <script>
         function fetchDataEvents() {

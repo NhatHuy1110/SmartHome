@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Connection2.php'; // Use the updated connection class
+require_once 'Connection2.php'; // Use the updated connection class
 $db = new DBConn();
 
 $uid = $_SESSION['uid'];

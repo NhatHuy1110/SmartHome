@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Establishing Connection with Server by passing server_name, user_id and password as a parameter
-require 'Connection2.php';
+require_once 'Connection2.php';
 $db = new DBConn();
 $error = '';
 
@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
 
 		if ($user) {
 			$_SESSION['login_customer'] = $user[0]['Username'];
-			$_SESSION['uid'] = $user[0]['UserID']; // Adjust column name as needed
+			$_SESSION['uid'] = $user[0]['UID']; // Adjust column name as needed
 			header("location: index.php");
 			exit();
 		} else {

@@ -1,5 +1,5 @@
 <?php
-require 'Connection2.php'; // Include database connection using DBConn class
+require_once 'Connection2.php'; // Include database connection using DBConn class
 $db = new DBConn();
 
 // Use the selectWhere function to fetch data
