@@ -3,53 +3,33 @@ require_once 'Connection2.php';
 require_once 'config.php';
 $db = new DBConn();
 
-// Fetch data from light feed
-$ch = curl_init($lightLevelFeedUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
-$response = curl_exec($ch);
-curl_close($ch);
-$data = json_decode($response, true);
+function fetchDataFromFeed($url, $apiKey)
+{
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-AIO-Key: $apiKey"]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
 
-// Fetch data from temper feed
-$ch1 = curl_init($temperatureFeedUrl);
-curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch1, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
-$response1 = curl_exec($ch1);
-curl_close($ch1);
-$data1 = json_decode($response1, true);
-
-// Fetch data from movement feed
-$ch2 = curl_init($motionFeedUrl);
-curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch2, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
-$response2 = curl_exec($ch2);
-curl_close($ch2);
-$data2 = json_decode($response2, true);
-
-// Fetch data from fan feed
-$ch3 = curl_init($fanControlFeedUrl);
-curl_setopt($ch3, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch3, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
-$response3 = curl_exec($ch3);
-curl_close($ch3);
-$data3 = json_decode($response3, true);
-
-
-// Fetch data from LED feed
-$ch4 = curl_init($ledControlFeedUrl);
-curl_setopt($ch4, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch4, CURLOPT_HTTPHEADER, ["X-AIO-Key: $adaApiKey"]);
-$response4 = curl_exec($ch4);
-curl_close($ch4);
-$data4 = json_decode($response4, true);
+// Fetch data from different feeds
+$data = fetchDataFromFeed($lightLevelFeedUrl, $adaApiKey); // Light feed
+$data1 = fetchDataFromFeed($temperatureFeedUrl, $adaApiKey); // Temperature feed
+$data2 = fetchDataFromFeed($motionFeedUrl, $adaApiKey); // Movement feed
+$data3 = fetchDataFromFeed($fanControlFeedUrl, $adaApiKey); // Fan feed
+$data4 = fetchDataFromFeed($ledControlFeedUrl, $adaApiKey); // LED feed
 
 // Extract the latest values
-$lum = isset($data["last_value"]) ? $data["last_value"] : null; // Light feed
-$temp = isset($data1["last_value"]) ? $data1["last_value"] : null; // Temper feed
-$pres = isset($data2["last_value"]) ? $data2["last_value"] : null; // Movement feed
-$Fan = isset($data3["last_value"]) ? $data3["last_value"] : null; // fan feed
-$LED = isset($data4["last_value"]) ? $data4["last_value"] : null; // led feed
+function getLastValue($data)
+{
+    return isset($data["last_value"]) ? $data["last_value"] : null;
+}
+$lum  = getLastValue($data);   // Light feed
+$temp = getLastValue($data1);  // Temperature feed
+$pres = getLastValue($data2);  // Movement feed
+$Fan  = getLastValue($data3);  // Fan feed
+$LED  = getLastValue($data4);  // LED feed
 print_r($Fan);
 
 
@@ -64,11 +44,15 @@ if ($pres === "Yes") {
 
 // Extract timestamps
 date_default_timezone_set("Asia/Ho_Chi_Minh");
-$dateTimeLight = isset($data["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data["updated_at"])) : null;
-$dateTimeTemper = isset($data1["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data1["updated_at"])) : null;
-$dateTimePres = isset($data2["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data2["updated_at"])) : null;
-$dateTimeFan = isset($data3["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data3["updated_at"])) : null;
-$dateTimeLED = isset($data4["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data4["updated_at"])) : null;
+function getFormattedTimestamp($data)
+{
+    return isset($data["updated_at"]) ? date("Y-m-d H:i:s", strtotime($data["updated_at"])) : null;
+}
+$dateTimeLight  = getFormattedTimestamp($data);
+$dateTimeTemper = getFormattedTimestamp($data1);
+$dateTimePres   = getFormattedTimestamp($data2);
+$dateTimeFan    = getFormattedTimestamp($data3);
+$dateTimeLED    = getFormattedTimestamp($data4);
 print_r($dateTimeFan);
 
 

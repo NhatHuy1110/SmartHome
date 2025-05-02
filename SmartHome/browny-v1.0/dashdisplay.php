@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'head.php';
-session_start() ?>
+<?php
+$pageTitle = "Dashboard";
+include 'head.php';
+session_start()
+?>
 
 <body>
 
-    <?php include 'navbar.php'; ?>
+    <?php include 'navbar.php';
+    include 'TraumaDump.php' ?>
 
     <div class="clearfix"></div>
 
@@ -99,8 +103,7 @@ session_start() ?>
 
     <!-- Scripts -->
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/navbarHandler.js" defer></script>
-    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/dashdisplay.js"></script>
 
 </body>
 

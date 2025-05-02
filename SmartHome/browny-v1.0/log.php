@@ -45,53 +45,10 @@ $lightData = $db->selectWhere(
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&amp;subset=devanagari,latin-ext" rel="stylesheet">
-    <link rel="shortcut icon" type="image/icon" href="assets/logo/favicon.png" />
-
-    <!-- Css for data display box -->
-    <link rel="stylesheet" href="assets/css/DisplayBox.css">
-
-    <!-- Font-awesome.min.css -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-
-    <!-- Flat icon css -->
-    <link rel="stylesheet" href="assets/css/flaticon.css">
-
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="assets/css/animate.css">
-
-    <!-- Owl.carousel.css -->
-    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
-
-    <!-- Bootstrap.min.css -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
-    <!-- Bootsnav -->
-    <link rel="stylesheet" href="assets/css/bootsnav.css">
-
-    <link rel="stylesheet" href="assets/css/user.css">
-
-    <link rel="stylesheet" href="assets/css/viewshopdetails.css">
-
-    <!-- Style.css -->
-    <link rel="stylesheet" href="assets/css/style.css">
-
-    <!-- Responsive.css -->
-    <link rel="stylesheet" href="assets/css/responsive.css">
-
-    <!-- chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script src="https://kit.fontawesome.com/6b23de7647.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="notifHandler.js"></script>
-
-    <title>Database Logs</title>
-</head>
+<?php
+$pageTitle = "Database Logs";
+include 'head.php';
+?>
 
 <body>
 
