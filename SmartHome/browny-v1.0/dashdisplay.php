@@ -3,7 +3,6 @@
 <?php
 $pageTitle = "Dashboard";
 include 'head.php';
-session_start()
 ?>
 
 <body>
@@ -100,11 +99,6 @@ session_start()
             </div>
         </div>
     </section>
-
-    <!-- Scripts -->
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/dashdisplay.js"></script>
-
 </body>
 
 </html>

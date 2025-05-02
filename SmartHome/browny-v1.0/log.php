@@ -1,6 +1,5 @@
 <?php
 // Include the Connection2.php file
-session_start();
 require_once 'Connection2.php';
 
 // Create an instance of DBConn

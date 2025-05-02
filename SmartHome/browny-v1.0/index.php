@@ -1,5 +1,4 @@
 <!doctype html>
-<?php session_start(); ?>
 <html class="no-js" lang="en">
 
 <?php
@@ -31,18 +30,6 @@ include 'head.php';
             </div>
         </header>
     </div>
-
-    <!-- JS Plugins -->
-    <script src="assets/js/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/bootsnav.js"></script>
-    <script src="assets/js/jquery.sticky.js"></script>
-    <script src="assets/js/progressbar.js"></script>
-    <script src="assets/js/jquery.appear.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="assets/js/custom.js"></script>
 </body>
 
 </html>

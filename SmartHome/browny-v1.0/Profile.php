@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'Connection2.php';
 $db = new DBConn();
 $conn = $db->getConnection();
@@ -71,9 +70,6 @@ include 'head.php';
             </div>
         </div>
     </section>
-
-    <!-- Bootstrap JS -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </body>
 
 </html>

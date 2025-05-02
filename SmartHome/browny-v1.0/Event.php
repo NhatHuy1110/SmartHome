@@ -8,7 +8,8 @@ include 'head.php';
 
 <body>
 
-    <?php include 'navbar.php';
+    <?php
+    include 'navbar.php';
     require_once 'eventstuff.php';
     ?>
 
@@ -16,13 +17,14 @@ include 'head.php';
 
     <div class="event-container">
         <h1>Schedule Management</h1>
-        <button id="add-event-btn">Add New Event</button> <!-- Button to open the dialog -->
+        <button id="add-event-btn">Add New Event</button>
         <div id="event-dashboard"></div>
     </div>
 
     <dialog id="add-event-dialog">
         <form id="add-event-form">
             <h2>Add New Event</h2>
+
             <label for="event-name">Event Name:</label>
             <input type="text" id="event-name" name="event-name" required />
 
@@ -32,7 +34,7 @@ include 'head.php';
             <label for="start-time">Start Time:</label>
             <input type="time" id="start-time" name="start-time" required />
 
-            <label for="duration">Duration(in minutes):</label>
+            <label for="duration">Duration (in minutes):</label>
             <input type="number" id="duration" name="duration" required />
 
             <label for="temp-upper">Temperature Upper:</label>
@@ -47,7 +49,6 @@ include 'head.php';
             <label for="lum-lower">Luminosity Lower:</label>
             <input type="number" id="lum-lower" name="lum-lower" required />
 
-            <!-- New ERepeat Field -->
             <label for="e-repeat">Repeat:</label>
             <select id="e-repeat" name="e-repeat" required>
                 <option value="Daily">Daily</option>
@@ -64,13 +65,12 @@ include 'head.php';
 
     <style>
         .event-container {
-            background-color: rgb(227, 227, 227);
+            background-color: #e3e3e3;
             width: 50%;
-            border: 1px solid black;
-            margin: auto;
-            margin-top: 120px;
-            border-radius: 10px;
+            margin: 120px auto 0;
             padding: 20px;
+            border: 1px solid black;
+            border-radius: 10px;
         }
 
         .event-container h1 {
@@ -94,13 +94,12 @@ include 'head.php';
         }
 
         .event-blocks {
-            background-color: rgb(255, 255, 255);
-            border: 1px solid rgb(0, 0, 0);
+            background-color: #fff;
+            border: 1px solid #000;
             width: 80%;
-            margin: auto;
-            margin-bottom: 20px;
-            border-radius: 10px;
+            margin: 20px auto;
             padding: 10px 20px;
+            border-radius: 10px;
         }
 
         .constraint {
@@ -111,101 +110,92 @@ include 'head.php';
         #event-header {
             display: flex;
             justify-content: space-between;
-            /* Space between the event name and controls */
             align-items: center;
-            /* Vertically align items */
             height: 40px;
         }
 
         #event-header h2 {
             font-size: 30px;
             margin: 0;
-            /* Remove default margin */
         }
 
         .btn-div {
             display: flex;
-            /* Use flexbox for horizontal alignment */
             align-items: center;
-            /* Vertically align items */
             gap: 10px;
-            /* Add spacing between the edit icon and toggle button */
         }
 
-        .button {
-            background-color: rgb(75, 75, 75);
-            width: 90px;
-            height: 40px;
-            border: 1px solid black;
-            border-radius: 30px;
-            cursor: pointer;
+        /* Toggle switch */
+        #navbar {
             position: relative;
-        }
-
-        .button::before {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background-color: white;
-            content: "";
-            border-radius: 50px;
-            margin: 5px;
-            transition: 0.3s;
-        }
-
-        input:checked+.button {
-            background-color: rgb(92, 244, 69);
-        }
-
-        input:checked+.button::before {
-            transform: translateX(50px);
+            z-index: 10;
+            /* Ensures it stays in front */
         }
 
         .checkbox {
             display: none;
         }
 
+        .button {
+            width: 60px;
+            height: 30px;
+            background-color: #4b4b4b;
+            border-radius: 30px;
+            position: relative;
+            transition: background-color 0.3s;
+            border: 1px solid black;
+        }
+
+        .button::before {
+            content: "";
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 2.5px;
+            left: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .checkbox:checked+.button {
+            background-color: #5cf445;
+        }
+
+        .checkbox:checked+.button::before {
+            transform: translateX(30px);
+        }
+
+        /* Edit icon */
         .edit-icon {
             color: #007bff;
-            /* Blue color for the icon */
             font-size: 20px;
-            /* Icon size */
             cursor: pointer;
-            /* Pointer cursor on hover */
             margin-left: 10px;
-            /* Add spacing */
             transition: color 0.3s ease;
-            /* Smooth color transition */
         }
 
         .edit-icon:hover {
             color: #0056b3;
-            /* Darker blue on hover */
         }
 
+        /* Dialog styling */
         dialog {
             border: none;
             border-radius: 10px;
             padding: 20px;
+            background-color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 400px;
             position: fixed;
-            /* Position the dialog relative to the viewport */
             top: 50%;
-            /* Center vertically */
             left: 50%;
-            /* Center horizontally */
             transform: translate(-50%, -50%);
-            /* Adjust for the dialog's own dimensions */
-            background-color: white;
-            /* Ensure the background is visible */
             z-index: 1000;
-            /* Ensure it appears above other elements */
         }
 
         dialog::backdrop {
             background-color: rgba(0, 0, 0, 0.5);
-            /* Add a semi-transparent background */
         }
 
         dialog form {
@@ -220,7 +210,6 @@ include 'head.php';
             margin-top: 10px;
         }
     </style>
-
 </body>
 
 </html>

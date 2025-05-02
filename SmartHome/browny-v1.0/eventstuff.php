@@ -1,5 +1,4 @@
 <?php
-session_start();
 #echo $_SESSION['uid'] ?? 'UID not set';
 require_once 'Connection2.php'; // Use the DBConn class
 
@@ -28,9 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
     exit; // Stop further processing to prevent rendering the HTML
 }
 ?>
-<!-- Include jQuery and Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <script>
     function fetchDataEvents() {
