@@ -3,14 +3,8 @@ session_start();
 require_once 'Connection2.php'; // Use the updated connection class
 $db = new DBConn();
 
-$uid = $_SESSION['uid'];
-
-// Define WHERE condition
-$whereConditions = ['UID' => $uid];
-$types = 'i'; // UID is an integer
-
-// Fetch all columns from the 'event' table for the logged-in user
-$result = $db->selectWhere('event', $whereConditions, '', 0, 'DESC', $types);
+// Fetch all columns from the 'event' table without constraints
+$result = $db->selectWhere('event', [], '', 0, 'DESC');
 
 $data = array();
 

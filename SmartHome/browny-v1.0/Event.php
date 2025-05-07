@@ -25,8 +25,8 @@ include 'head.php';
         <form id="add-event-form">
             <h2>Add New Event</h2>
 
-            <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required />
+            <!--<label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" name="event-name" required />-->
 
             <label for="event-date">Event Date:</label>
             <input type="date" id="event-date" name="event-date" required />
@@ -36,18 +36,6 @@ include 'head.php';
 
             <label for="duration">Duration (in minutes):</label>
             <input type="number" id="duration" name="duration" required />
-
-            <label for="temp-upper">Temperature Upper:</label>
-            <input type="number" id="temp-upper" name="temp-upper" required />
-
-            <label for="temp-lower">Temperature Lower:</label>
-            <input type="number" id="temp-lower" name="temp-lower" required />
-
-            <label for="lum-upper">Luminosity Upper:</label>
-            <input type="number" id="lum-upper" name="lum-upper" required />
-
-            <label for="lum-lower">Luminosity Lower:</label>
-            <input type="number" id="lum-lower" name="lum-lower" required />
 
             <label for="e-repeat">Repeat:</label>
             <select id="e-repeat" name="e-repeat" required>
