@@ -8,6 +8,13 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
     exit();
 }
 ?>
+<style>
+    #navbar {
+        position: relative;
+        z-index: 10;
+        /* Ensures it stays in front */
+    }
+</style>
 <div id="navbar">
     <div class="header-area">
         <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">

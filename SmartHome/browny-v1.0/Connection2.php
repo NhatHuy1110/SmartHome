@@ -140,6 +140,57 @@ class DBConn
         $result = $stmt->get_result();
         return $result && $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : false;
     }
+    public function update(string $tableName, array $fields, array $conditions, string $types = ''): bool
+    {
+        $setClause = implode(", ", array_map(fn($key) => "$key = ?", array_keys($fields)));
+        $whereClause = implode(" AND ", array_map(fn($key) => "$key = ?", array_keys($conditions)));
+
+        $sql = "UPDATE $tableName SET $setClause WHERE $whereClause";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $values = array_merge(array_values($fields), array_values($conditions));
+
+        // Auto-determine types if not provided
+        if (empty($types)) {
+            $types = '';
+            foreach ($values as $val) {
+                if (is_int($val)) $types .= 'i';
+                elseif (is_float($val)) $types .= 'd';
+                else $types .= 's';
+            }
+        }
+
+        $stmt->bind_param($types, ...$values);
+        return $stmt->execute();
+    }
+
+    public function delete(string $tableName, array $conditions, string $types = ''): bool
+    {
+        $whereClause = implode(" AND ", array_map(fn($key) => "$key = ?", array_keys($conditions)));
+
+        $sql = "DELETE FROM $tableName WHERE $whereClause";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $values = array_values($conditions);
+
+        // Auto-determine types if not provided
+        if (empty($types)) {
+            $types = '';
+            foreach ($values as $val) {
+                if (is_int($val)) $types .= 'i';
+                elseif (is_float($val)) $types .= 'd';
+                else $types .= 's';
+            }
+        }
+
+        $stmt->bind_param($types, ...$values);
+        return $stmt->execute();
+    }
+
 
 
 
