@@ -50,6 +50,7 @@ include 'head.php';
                     </select>
                     <canvas id="fanWorkingChart"></canvas>
                 </div>
+
             </div>
 
             <!-- Right section -->
@@ -87,6 +88,7 @@ include 'head.php';
                         $inputs = [
                             'lightThreshold' => 'Light Threshold',
                             'fanThreshold' => 'Temperature Threshold',
+
                         ];
                         foreach ($inputs as $id => $label) {
                             echo "<div class='input-group'>
@@ -107,6 +109,7 @@ include 'head.php';
     </section>
 
     <script src="dashdisplay.js"></script>
+
 </body>
 
 </html>

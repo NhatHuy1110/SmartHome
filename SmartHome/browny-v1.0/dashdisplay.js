@@ -646,6 +646,7 @@ function fetchHistoryOutput() {
                             fill: false,
                             tension: 0.1
                         }
+
                     ]
                 },
                 options: {
@@ -834,6 +835,7 @@ fetchHistoryTemp();
 fetchFanWorkingCount();
 
 
+
 window.addEventListener('resize', () => {
     realTimeChart.resize(); // Trigger Chart.js to resize dynamically
 });
@@ -844,3 +846,4 @@ window.addEventListener('resize', () => {
 });
 
 console.log("dashdisplay.js is loaded!");
+
