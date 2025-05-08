@@ -49,10 +49,6 @@ if (isset($_SESSION['login_customer'])) {
         </div>
 
         <div class="col-md-5 col-md-offset-4">
-            <?php if (!empty($error)): ?>
-                <label class="text-danger" style="margin-left: 5px;"><?php echo $error; ?></label>
-            <?php endif; ?>
-
             <div class="panel panel-primary">
                 <div class="panel-heading">Login</div>
                 <div class="panel-body">
@@ -81,8 +77,15 @@ if (isset($_SESSION['login_customer'])) {
                             </div>
                         </div>
 
-                        <button class="btn btn-primary" name="submit" type="submit">Submit</button>
-                        <p class="help-block" style="margin-top:10px;">or <br> Create a new account.</p>
+                        <button class="btn btn-primary" name="login_submit" type="submit">Login</button>
+                        <button class="btn btn-success" name="signup_submit" type="submit" style="margin-left: 10px;">Sign Up</button>
+
+                        <?php if (!empty($error)): ?>
+                            <label class="text-danger" style="margin-left: 5px;"><?php echo $error; ?></label>
+                        <?php endif; ?>
+                        <?php if (!empty($success)): ?>
+                            <label class="text-success" style="margin-left: 5px;"><?php echo $success; ?></label>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>

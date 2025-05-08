@@ -47,19 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
 
                     // Add event details
                     eventBlock.innerHTML = `
-                            <div id="event-header">
-                                <div class="start-time">Start time: ${event.Start_Time}</div>
-                                <div class="Duration">Duration: ${event.Duration} mins</div>
-                                <div class="btn-div"> 
-                                    <i class="fa fa-edit edit-icon" onclick="editEvent(${event.EID})"></i>
-                                    <input type="checkbox" class="checkbox" id="${checkboxId}" 
-                                        onchange="updateStatus(${event.EID}, this.checked)" />
-                                    <label for="${checkboxId}" class="button" id="${buttonId}"></label>
-                                </div>
-                            </div>
-                            <div class="event-date">Event date: ${event.EDate}</div>
-                            <h2 id="e-repeat">${event.ERepeat}</h2>
-                        `;
+    <div id="event-header">
+        <div class="start-time">Start time: ${event.Start_Time}</div>
+        <div class="Duration">Duration: ${event.Duration} mins</div>
+        <div class="btn-div"> 
+            <i class="fa fa-edit edit-icon" onclick="editEvent(${event.EID}, '${event.EDate}', '${event.Start_Time}', ${event.Duration}, '${event.ERepeat}')"></i>
+            <i class="fa fa-trash delete-icon" onclick="deleteEvent(${event.EID})"></i>
+            <input type="checkbox" class="checkbox" id="${checkboxId}" onchange="updateStatus(${event.EID}, this.checked)" />
+            <label for="${checkboxId}" class="button" id="${buttonId}"></label>
+        </div>
+    </div>
+    <div class="event-date">Event date: ${event.EDate}</div>
+    <h2 id="e-repeat">${event.ERepeat}</h2>
+`;
+
                     eventContainer.appendChild(eventBlock);
 
                     // Set the status of event on/off
@@ -153,4 +154,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                 });
         });
     });
+</script>
+
+<script>
+    function editEvent(EID, date, startTime, duration, repeat) {
+        const dialog = document.getElementById('add-event-dialog');
+        const addEventForm = document.getElementById('add-event-form');
+        document.querySelector('#add-event-dialog h2').textContent = 'Edit Event';
+        const submitButton = addEventForm.querySelector('button[type="submit"]');
+        submitButton.textContent = 'Save Changes';
+
+        // Pre-fill the form
+        addEventForm['event-date'].value = date;
+        addEventForm['start-time'].value = startTime;
+        addEventForm['duration'].value = duration;
+        addEventForm['e-repeat'].value = repeat;
+
+        dialog.showModal();
+
+        // Override submit temporarily for update
+        addEventForm.onsubmit = (e) => {
+            e.preventDefault();
+            const formData = new FormData(addEventForm);
+            const updateData = {
+                EDate: formData.get('event-date'),
+                Start_time: formData.get('start-time'),
+                Duration: formData.get('duration'),
+                ERepeat: formData.get('e-repeat'),
+                EID: EID
+            };
+
+            fetch('update_event.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Event updated successfully!');
+                        dialog.close();
+                        fetchDataEvents();
+                    } else {
+                        alert('Failed to update event.');
+                    }
+                });
+        };
+    }
+
+    function deleteEvent(EID) {
+        if (!confirm("Are you sure you want to delete this event?")) return;
+
+        fetch('delete_event.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    EID: EID
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Event deleted successfully!');
+                    fetchDataEvents();
+                } else {
+                    alert('Delete failed: ' + data.message);
+                }
+            });
+    }
 </script>
