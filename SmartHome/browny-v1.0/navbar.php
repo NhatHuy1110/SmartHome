@@ -52,5 +52,35 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
         $('#navbar-menu').on('show.bs.collapse', function() {
             $(this).css('height', 'auto');
         });
+
+        // Check every minute for matching events
+        setInterval(() => {
+            fetch('fetch_events.php') // Fetch events again
+                .then(response => response.json())
+                .then(data => {
+                    const currentTime = new Date().toTimeString().split(' ')[0]; // Current time in HH:mm:ss format
+
+                    data.forEach(event => {
+                        if (event.Start_time === currentTime && event.Status === 'on') {
+                            // Calculate the end time
+                            const startTime = event.Start_time; // Start time in HH:mm:ss
+                            const duration = parseInt(event.Duration, 10); // Duration in minutes
+
+                            // Convert start time to a Date object
+                            const [hours, minutes, seconds] = startTime.split(':').map(Number);
+                            const startDate = new Date();
+                            startDate.setHours(hours, minutes, seconds);
+
+                            // Add the duration to calculate the end time
+                            const endDate = new Date(startDate.getTime() + duration * 60000); // Add duration in milliseconds
+                            const endTime = endDate.toTimeString().split(' ')[0]; // Format end time as HH:mm:ss
+
+                            // Log the event details
+                            console.log(`Event Matched: ${event.EID}, Start Time: ${event.Start_time}, End Time: ${endTime}, Status: ${event.Status}`);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching events:', error));
+        }, 10000); // Check every 60 seconds
     });
 </script>
