@@ -58,29 +58,68 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
             fetch('fetch_events.php') // Fetch events again
                 .then(response => response.json())
                 .then(data => {
-                    const currentTime = new Date().toTimeString().split(' ')[0]; // Current time in HH:mm:ss format
+                    console.log(data);
+
+                    // Get the current time in HH:mm:ss format with seconds set to 00
+                    const now = new Date();
+                    now.setSeconds(0, 0); // Set seconds and milliseconds to 0
+                    const currentTime = now.toTimeString().split(' ')[0]; // Format as HH:mm:ss
+                    console.log(`current time: ${currentTime}`);
 
                     data.forEach(event => {
-                        if (event.Start_time === currentTime && event.Status === 'on') {
-                            // Calculate the end time
-                            const startTime = event.Start_time; // Start time in HH:mm:ss
-                            const duration = parseInt(event.Duration, 10); // Duration in minutes
-
-                            // Convert start time to a Date object
-                            const [hours, minutes, seconds] = startTime.split(':').map(Number);
-                            const startDate = new Date();
-                            startDate.setHours(hours, minutes, seconds);
-
-                            // Add the duration to calculate the end time
-                            const endDate = new Date(startDate.getTime() + duration * 60000); // Add duration in milliseconds
-                            const endTime = endDate.toTimeString().split(' ')[0]; // Format end time as HH:mm:ss
-
-                            // Log the event details
-                            console.log(`Event Matched: ${event.EID}, Start Time: ${event.Start_time}, End Time: ${endTime}, Status: ${event.Status}`);
+                        console.log(`event time: ${event.Start_Time}`);
+                        if (event.Start_Time === currentTime && event.Status === 'on') {
+                            // Call the new function to turn on light and fan
+                            console.log(`Event Matched: ${event.EID}, Start Time: ${event.Start_Time}, Status: ${event.Status}`);
+                            turnOnLightAndFan(); // Turn on light and fan at level 100
                         }
                     });
                 })
                 .catch(error => console.error('Error fetching events:', error));
         }, 10000); // Check every 60 seconds
     });
+
+    function turnOnLightAndFan() {
+        console.log("Turning on light and fan at level 100");
+
+        // Turn on light
+        fetch('proxy.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    device: 'led',
+                    value: 100
+                })
+            })
+            .then(() => {
+                console.log("Light turned on at level 100");
+                slider1.removeEventListener('input', handleSliderInput1);
+                slider1.value = 100; // Update slider dynamically
+                valueDisplay1.textContent = slider1.value;
+                slider1.addEventListener('input', handleSliderInput1); // Re-add event listener
+            })
+            .catch(error => console.error('Error turning on light:', error));
+
+        // Turn on fan
+        fetch('proxy.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    device: 'fan',
+                    value: 100
+                })
+            })
+            .then(() => {
+                console.log("Fan turned on at level 100");
+                slider.removeEventListener('input', handleSliderInput);
+                slider.value = 100; // Update slider dynamically
+                valueDisplay.textContent = slider.value;
+                slider.addEventListener('input', handleSliderInput); // Re-add event listener
+            })
+            .catch(error => console.error('Error turning on fan:', error));
+    }
 </script>
