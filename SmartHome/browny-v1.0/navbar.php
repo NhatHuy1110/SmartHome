@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $currentFile = basename($_SERVER['PHP_SELF']);
 if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
     header("Location: index.php");

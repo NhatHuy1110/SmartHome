@@ -48,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                     // Add event details
                     eventBlock.innerHTML = `
                             <div id="event-header">
-                                <h2>${event.EName}</h2>
+                                <div class="start-time">Start time: ${event.Start_Time}</div>
+                                <div class="Duration">Duration: ${event.Duration} mins</div>
                                 <div class="btn-div"> 
                                     <i class="fa fa-edit edit-icon" onclick="editEvent(${event.EID})"></i>
                                     <input type="checkbox" class="checkbox" id="${checkboxId}" 
@@ -57,14 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                                 </div>
                             </div>
                             <div class="event-date">Event date: ${event.EDate}</div>
-                            <div class="start-time">Start time: ${event.Start_time}</div>
                             <h2 id="e-repeat">${event.ERepeat}</h2>
-                            <div class="constraint">
-                                <p>Temperature upper: ${event.Temp_Upper}</p>
-                                <p>Temperature lower: ${event.Temp_Lower}</p>
-                                <p>Lumid upper: ${event.Lum_Upper}</p>
-                                <p>Lumid lower: ${event.Lum_Lower}</p>
-                            </div>
                         `;
                     eventContainer.appendChild(eventBlock);
 
@@ -125,16 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
             // Collect form data
             const formData = new FormData(addEventForm);
             const eventData = {
-                EName: formData.get('event-name'),
                 EDate: formData.get('event-date'),
                 Start_time: formData.get('start-time'),
                 Duration: formData.get('duration'),
-                Temp_Upper: formData.get('temp-upper'),
-                Temp_Lower: formData.get('temp-lower'),
-                Lum_Upper: formData.get('lum-upper'),
-                Lum_Lower: formData.get('lum-lower'),
                 ERepeat: formData.get('e-repeat'), // Include the ERepeat field
             };
+
+            console.log(eventData);
 
             // Send the data to the server
             fetch('add_event.php', {
@@ -146,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
                 })
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log(data)
                     if (data.success) {
                         alert('Event added successfully!');
                         dialog.close(); // Close the dialog

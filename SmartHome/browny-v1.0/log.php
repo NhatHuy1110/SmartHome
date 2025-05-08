@@ -5,41 +5,21 @@ require_once 'Connection2.php';
 // Create an instance of DBConn
 $db = new DBConn();
 
-// Fetch data from Sensors table (last 10 rows, ordered by DateTime)
-$sensorsData = $db->selectWhere(
-    'Sensors',
-    [],
-    'DateTime',
-    10,
-    'DESC',
-    '',
-    []
-);
+// Check if the request is for JSON data
+if (isset($_GET['fetchData']) && $_GET['fetchData'] === 'true') {
+    // Fetch all data from Sensors, Fan, and Light tables
+    $sensorsData = $db->selectWhere('Sensors', [], 'DateTime', 0, 'DESC');
+    $fanData = $db->selectWhere('Fan', [], 'DateTime', 0, 'DESC');
+    $lightData = $db->selectWhere('Light', [], 'DateTime', 0, 'DESC');
 
-// Fetch data from Fan table (last 10 rows, ordered by DateTime)
-$fanData = $db->selectWhere(
-    'Fan',
-    [],
-    'DateTime',
-    10,
-    'DESC',
-    '',
-    []
-);
-
-// Fetch data from Light table (last 10 rows, ordered by DateTime)
-$lightData = $db->selectWhere(
-    'Light',
-    [],
-    'DateTime',
-    10,
-    'DESC',
-    '',
-    []
-);
-
-// Close the database connection
-//$db->close();
+    // Return the data as JSON
+    echo json_encode([
+        'sensors' => $sensorsData,
+        'fan' => $fanData,
+        'light' => $lightData
+    ]);
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,24 +47,15 @@ include 'head.php';
                     <th>Presence</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                if ($sensorsData) {
-                    foreach ($sensorsData as $row) {
-                        echo "<tr>
-                                <td>{$row['RID']}</td>
-                                <td>{$row['DateTime']}</td>
-                                <td>{$row['Luminosity']}</td>
-                                <td>{$row['Temperature']}</td>
-                                <td>" . ($row['Presence'] ? 'Yes' : 'No') . "</td>
-                              </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No data available</td></tr>";
-                }
-                ?>
+            <tbody id="sensorsTableBody">
+                <!-- Data will be populated by JavaScript -->
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination" id="sensorsPagination">
+                <!-- Pagination links will be populated by JavaScript -->
+            </ul>
+        </nav>
 
         <h2>Fan Table</h2>
         <table class="table table-bordered">
@@ -96,23 +67,15 @@ include 'head.php';
                     <th>Fan Speed</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                if ($fanData) {
-                    foreach ($fanData as $row) {
-                        echo "<tr>
-                                <td>{$row['RID']}</td>
-                                <td>{$row['FID']}</td>
-                                <td>{$row['DateTime']}</td>
-                                <td>{$row['Fan_Speed']}</td>
-                              </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='4'>No data available</td></tr>";
-                }
-                ?>
+            <tbody id="fanTableBody">
+                <!-- Data will be populated by JavaScript -->
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination" id="fanPagination">
+                <!-- Pagination links will be populated by JavaScript -->
+            </ul>
+        </nav>
 
         <h2>Light Table</h2>
         <table class="table table-bordered">
@@ -124,24 +87,97 @@ include 'head.php';
                     <th>Intensity</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                if ($lightData) {
-                    foreach ($lightData as $row) {
-                        echo "<tr>
-                                <td>{$row['RID']}</td>
-                                <td>{$row['LID']}</td>
-                                <td>{$row['DateTime']}</td>
-                                <td>{$row['Intensity']}</td>
-                              </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='4'>No data available</td></tr>";
-                }
-                ?>
+            <tbody id="lightTableBody">
+                <!-- Data will be populated by JavaScript -->
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination" id="lightPagination">
+                <!-- Pagination links will be populated by JavaScript -->
+            </ul>
+        </nav>
     </div>
+
+    <script>
+        // JavaScript to handle pagination
+        const rowsPerPage = 5;
+
+        // Fetch all data from the server
+        fetch('log.php?fetchData=true')
+            .then(response => response.json())
+            .then(data => {
+                // Populate tables with pagination
+                setupPagination(data.sensors, 'sensorsTableBody', 'sensorsPagination');
+                setupPagination(data.fan, 'fanTableBody', 'fanPagination');
+                setupPagination(data.light, 'lightTableBody', 'lightPagination');
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        // Function to set up pagination
+        function setupPagination(data, tableBodyId, paginationId) {
+            const tableBody = document.getElementById(tableBodyId);
+            const pagination = document.getElementById(paginationId);
+
+            const totalPages = Math.ceil(data.length / rowsPerPage);
+
+            // Function to render a specific page
+            function renderPage(page) {
+                // Clear the table body
+                tableBody.innerHTML = '';
+
+                // Calculate start and end indices
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Populate the table with rows for the current page
+                const rows = data.slice(start, end);
+                rows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    for (const key in row) {
+                        const td = document.createElement('td');
+                        td.textContent = row[key];
+                        tr.appendChild(td);
+                    }
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            // Render the first page initially
+            renderPage(1);
+
+            // Clear existing pagination links
+            pagination.innerHTML = '';
+
+            // Create pagination links
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = 'page-item';
+                if (i === 1) li.classList.add('active');
+
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = i;
+
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Remove active class from all links
+                    const links = pagination.querySelectorAll('.page-item');
+                    links.forEach(link => link.classList.remove('active'));
+
+                    // Add active class to the clicked link
+                    li.classList.add('active');
+
+                    // Render the selected page
+                    renderPage(i);
+                });
+
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+    </script>
 
 </body>
 
