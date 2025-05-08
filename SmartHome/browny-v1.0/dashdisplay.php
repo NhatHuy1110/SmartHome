@@ -6,6 +6,7 @@ include 'head.php';
 ?>
 
 <body>
+    
 
     <?php include 'navbar.php';
     include 'TraumaDump.php' ?>
@@ -34,12 +35,22 @@ include 'head.php';
 
                 <div class="chartContainer">
                     <label>Select an Option:</label>
-                    <select id="menu-range" name="menu" onchange="handleDropdownChange()">
+                    <select id="menu-range" name="menu" onchange="fetchHistoryTemp()">
                         <option value="Week">7 Days</option>
                         <option value="Month">30 Days</option>
                     </select>
                     <canvas id="visualTemp"></canvas>
                 </div>
+
+                <div class="chartContainer">
+                    <label>Select an Option:</label>
+                    <select id="menu-range-fan" name="menu" onchange="fetchFanWorkingCount()">
+                        <option value="Week">7 Days</option>
+                        <option value="Month">30 Days</option>
+                    </select>
+                    <canvas id="fanWorkingChart"></canvas>
+                </div>
+
             </div>
 
             <!-- Right section -->
@@ -76,11 +87,8 @@ include 'head.php';
                         <?php
                         $inputs = [
                             'lightThreshold' => 'Light Threshold',
-                            'lightLevel' => 'Lower LED Power',
-                            'higherLightPower' => 'Higher LED Power',
                             'fanThreshold' => 'Temperature Threshold',
-                            'fanLevel' => 'Higher Fan Power',
-                            'lowerFanPower' => 'Lower Fan Power'
+
                         ];
                         foreach ($inputs as $id => $label) {
                             echo "<div class='input-group'>
@@ -99,6 +107,9 @@ include 'head.php';
             </div>
         </div>
     </section>
+
+    <script src="dashdisplay.js"></script>
+
 </body>
 
 </html>

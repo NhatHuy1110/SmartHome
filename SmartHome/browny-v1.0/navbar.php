@@ -20,7 +20,8 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
                 </div>
                 <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
                     <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li><a href="Dash_Board.php">Dash Board</a></li>
+                        <li><a href="dashdisplay.php">Dash Board</a></li>
+
                         <li><a href="log.php">Log</a></li>
                         <li><a href="Event.php">Event</a></li>
                         <li><a href="Profile.php">Profile</a></li>

@@ -43,21 +43,12 @@ automaticToggle.addEventListener('change', () => {
 confirmButton.addEventListener('click', (event) => {
     event.stopPropagation(); // Prevent clicking outside
     const lightThreshold = document.getElementById('lightThreshold').value;
-    const lightLevel = document.getElementById('lightLevel').value;
-    const higherLightPower = document.getElementById('higherLightPower').value;
     const fanThreshold = document.getElementById('fanThreshold').value;
-    const fanLevel = document.getElementById('fanLevel').value;
-    const lowerFanPower = document.getElementById('lowerFanPower').value;
-
 
     // Save inputs to object and localStorage
     inputs = {
         lightThreshold,
-        lightLevel,
-        higherLightPower,
-        fanThreshold,
-        fanLevel,
-        lowerFanPower
+        fanThreshold
     };
     localStorage.setItem('inputs', JSON.stringify(inputs));
 
@@ -92,11 +83,7 @@ resetButton.addEventListener('click', () => {
 function displayInputs() {
     const {
         lightThreshold,
-        lightLevel,
-        higherLightPower,
-        fanThreshold,
-        fanLevel,
-        lowerFanPower
+        fanThreshold
     } = inputs;
 
     if (Object.keys(inputs).length > 0) {
@@ -107,20 +94,14 @@ function displayInputs() {
                             <tr>
                                 <th>Device</th>
                                 <th>Threshold</th>
-                                <th>Lower Power</th>
-                                <th>Higher Power</th>
                             </tr>
                             <tr>
                                 <th>LED</th>
                                 <th>${lightThreshold}</th>
-                                <th>${lightLevel}</th>
-                                <th>${higherLightPower}</th>
                             </tr>
                             <tr>
                                 <th>Fan</th>
                                 <th>${fanThreshold}</th>
-                                <th>${lowerFanPower}</th>
-                                <th>${fanLevel}</th>
                             </tr>
                         </table> 
                     </div>
@@ -269,12 +250,12 @@ function fetchLatestSensorData() {
             document.getElementById('luminosity').textContent = (data.Luminosity || 'N/A') + ' LUX';
             document.getElementById('temperature').textContent = (data.Temperature || 'N/A') + ' (°C)';
 
-            if (data.Presence === "0") {
+            if (data.Presence === 0) {
                 document.getElementById('presence').textContent = "No";
-            } else if (data.Presence === "1") {
+            } else if (data.Presence === 1) {
                 document.getElementById('presence').textContent = "Yes";
             } else {
-                document.getElementById('presence').textContent = "N/A";
+                document.getElementById('presence').textContent = "NA";
             }
 
             let Light = Number(data.Luminosity);
@@ -295,19 +276,11 @@ function fetchLatestSensorData() {
 function handleLightAndFanSettings(Light, Temp) {
     let {
         lightThreshold: LightT,
-        lightLevel: LightL,
-        higherLightPower: HLightP,
         fanThreshold: FanT,
-        fanLevel: FanL,
-        lowerFanPower: LFanP
     } = inputs;
     //             const { lightThreshold, lightLevel, higherLightPower, fanThreshold, fanLevel, lowerFanPower} = inputs;
     LightT = Number(LightT);
-    LightL = Number(LightL);
-    HLightP = Number(HLightP);
     FanT = Number(FanT);
-    FanL = Number(FanL);
-    LFanP = Number(LFanP);
 
     let LightAdjustState = localStorage.getItem('isLightAdjusted') === 'true'; // Retrieve light state
     let LightAdjustNaN = localStorage.getItem('isLightAdjusted') === "NaN";
@@ -320,9 +293,10 @@ function handleLightAndFanSettings(Light, Temp) {
     let lowerFan = Temp < FanT && (FanAdjustState || FanAdjustNaN || Again);
     console.log(lowerLight, higherLight, higherFan, lowerFan, Again);
 
-    if (!isNaN(LightT) && !isNaN(LightL) && !isNaN(HLightP)) {
+    if (!isNaN(LightT)) {
 
         if (lowerLight) {
+            let lightOn = 100;
             fetch('proxy.php', {
                 method: 'POST',
                 headers: {
@@ -330,14 +304,14 @@ function handleLightAndFanSettings(Light, Temp) {
                 },
                 body: new URLSearchParams({
                     device: 'led',
-                    value: LightL
+                    value: lightOn
                 })
             })
                 .then(() => {
-                    console.log("Light adjusted to level:", LightL);
+                    console.log("Light adjusted to level:", lightOn);
                     slider1.removeEventListener('input', handleSliderInput1);
                     // Update slider dynamically
-                    slider1.value = LightL;
+                    slider1.value = lightOn;
                     valueDisplay1.textContent = slider1.value;
                     localStorage.setItem('isLightAdjusted', 'true'); // Persist flag
                     localStorage.setItem('autoAgain', 'false');
@@ -345,6 +319,7 @@ function handleLightAndFanSettings(Light, Temp) {
                     slider1.addEventListener('input', handleSliderInput1);
                 });
         } else if (higherLight) {
+            let lightOff = 0;
             fetch('proxy.php', {
                 method: 'POST',
                 headers: {
@@ -352,15 +327,15 @@ function handleLightAndFanSettings(Light, Temp) {
                 },
                 body: new URLSearchParams({
                     device: 'led',
-                    value: HLightP
+                    value: lightOff
                 })
             })
                 .then(() => {
-                    console.log("Light adjusted to level:", HLightP);
+                    console.log("Light adjusted to level:", lightOff);
                     // Temporarily disable the listener
                     slider1.removeEventListener('input', handleSliderInput1);
                     // Update slider dynamically
-                    slider1.value = HLightP;
+                    slider1.value = lightOff;
                     valueDisplay1.textContent = slider1.value;
                     localStorage.setItem('isLightAdjusted', 'false'); // Persist flag
                     localStorage.setItem('autoAgain', 'false');
@@ -370,8 +345,9 @@ function handleLightAndFanSettings(Light, Temp) {
         }
     }
 
-    if (!isNaN(FanT) && !isNaN(FanL) && !isNaN(LFanP)) {
+    if (!isNaN(FanT)) {
         if (higherFan) {
+            let fanOn = 100;
             fetch('proxy.php', {
                 method: 'POST',
                 headers: {
@@ -379,14 +355,14 @@ function handleLightAndFanSettings(Light, Temp) {
                 },
                 body: new URLSearchParams({
                     device: 'fan',
-                    value: FanL
+                    value: fanOn
                 })
             })
                 .then(() => {
-                    console.log("Fan adjusted to level:", FanL);
+                    console.log("Fan adjusted to level:", fanOn);
                     slider.removeEventListener('input', handleSliderInput);
                     // Update slider dynamically
-                    slider.value = FanL;
+                    slider.value = fanOn;
                     valueDisplay.textContent = slider.value;
                     localStorage.setItem('isFanAdjusted', 'true'); // Persist flag
                     localStorage.setItem('autoAgain', 'false');
@@ -394,6 +370,7 @@ function handleLightAndFanSettings(Light, Temp) {
                     slider.addEventListener('input', handleSliderInput);
                 });
         } else if (lowerFan) {
+            let fanOff = 0;
             fetch('proxy.php', {
                 method: 'POST',
                 headers: {
@@ -401,14 +378,14 @@ function handleLightAndFanSettings(Light, Temp) {
                 },
                 body: new URLSearchParams({
                     device: 'fan',
-                    value: LFanP
+                    value: fanOff
                 })
             })
                 .then(() => {
-                    console.log("Fan adjusted to level:", LFanP);
+                    console.log("Fan adjusted to level:", fanOff);
                     slider.removeEventListener('input', handleSliderInput);
                     // Update slider dynamically
-                    slider.value = LFanP;
+                    slider.value = fanOff;
                     valueDisplay.textContent = slider.value;
                     localStorage.setItem('isFanAdjusted', 'false'); // Persist flag
                     localStorage.setItem('autoAgain', 'false');
@@ -459,9 +436,12 @@ function updateChart() {
         .catch(error => console.error('Error fetching sensor data:', error));
 }
 
+let visualTempChart; // Global variable to store the chart instance
+
 function fetchHistoryTemp() {
     const dateStart = new Date();
     const range = document.getElementById('menu-range').value;
+    console.log(range);
 
     // Adjust the start date based on the selected range
     if (range === 'Week') {
@@ -480,15 +460,18 @@ function fetchHistoryTemp() {
 
     // Send the POST request
     fetch('fetch_history.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: postBody, // Send the constructed parameters
-    })
-        .then(response => response.json()) // Parse the JSON response
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: postBody,
+        })
+        .then(response => {
+            console.log('response:', response);
+            return response.json();
+        })
         .then(data => {
-            console.log('Historical Data:', data); // Log the response data
+            console.log('Historical Data:', data);
 
             // Calculate daily averages
             const averages = calculateDailyAverages(data);
@@ -499,28 +482,33 @@ function fetchHistoryTemp() {
             const temperatureData = averages.map(avg => avg.averageTemperature);
             const luminosityData = averages.map(avg => avg.averageLuminosity);
 
+            // Destroy the existing chart instance if it exists
+            if (visualTempChart) {
+                visualTempChart.destroy();
+            }
+
             // Update the chart with the calculated data
             const ctx = document.getElementById('visualTemp').getContext('2d');
-            new Chart(ctx, {
+            visualTempChart = new Chart(ctx, {
                 type: 'line', // Line chart
                 data: {
                     labels: labels, // Dates
                     datasets: [{
-                        label: 'Average Temperature (°C)',
-                        data: temperatureData, // Average temperatures
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Average Luminosity (LUX)',
-                        data: luminosityData, // Average luminosities
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        fill: false,
-                        tension: 0.1
-                    }
+                            label: 'Average Temperature (°C)',
+                            data: temperatureData, // Average temperatures
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Average Luminosity (LUX)',
+                            data: luminosityData, // Average luminosities
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        }
                     ]
                 },
                 options: {
@@ -550,6 +538,144 @@ function fetchHistoryTemp() {
             });
         })
         .catch(error => console.error('Error fetching historical data:', error)); // Handle errors
+}
+
+/*function calculateDailyAverages(data) {
+    const groupedData = {};
+
+    // Group temperatures and luminosities by date
+    data.forEach(record => {
+        const date = record.DateTime.split(' ')[0]; // Extract the date (YYYY-MM-DD)
+        if (!groupedData[date]) {
+            groupedData[date] = {
+                temperatures: [],
+                luminosities: []
+            };
+        }
+        groupedData[date].temperatures.push(Number(record.Temperature)); // Ensure Temperature is a number
+        groupedData[date].luminosities.push(Number(record.Luminosity)); // Ensure Luminosity is a number
+    });
+
+    console.log(`Grouped Data:`, groupedData);
+
+    // Calculate the average temperature and luminosity for each date
+    const dailyAverages = Object.entries(groupedData).map(([date, values]) => {
+        const totalTemperature = values.temperatures.reduce((sum, temp) => sum + temp, 0); // Sum all temperatures
+        const averageTemperature = totalTemperature / values.temperatures.length; // Calculate the average temperature
+
+        const totalLuminosity = values.luminosities.reduce((sum, lum) => sum + lum, 0); // Sum all luminosities
+        const averageLuminosity = totalLuminosity / values.luminosities.length; // Calculate the average luminosity
+
+        return {
+            date,
+            averageTemperature: averageTemperature.toFixed(2), // Round to 2 decimal places
+            averageLuminosity: averageLuminosity.toFixed(2) // Round to 2 decimal places
+        };
+    });
+
+    return dailyAverages;
+}*/
+
+function fetchHistoryOutput() {
+    const dateStart = new Date();
+    const range = document.getElementById('menu-range').value;
+    console.log(range);
+
+    // Adjust the start date based on the selected range
+    if (range === 'Week') {
+        dateStart.setDate(dateStart.getDate() - 7); // Subtract 7 days
+    } else if (range === 'Month') {
+        dateStart.setDate(dateStart.getDate() - 30); // Subtract 30 days
+    }
+    const formattedDateStart = dateStart.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const dateEnd = new Date();
+    dateEnd.setDate(dateEnd.getDate() - 1); // Subtract 1 day for the end date
+    const formattedDateEnd = dateEnd.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    // Construct the POST body with parameters
+    const postBody = `dateStart=${formattedDateStart}&dateEnd=${formattedDateEnd}`;
+
+    fetch('fetch_lightfan.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: postBody,
+        })
+        .then(response => {
+            console.log('response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Light Fan Data:', data);
+
+            // Calculate daily averages
+            const averages = calculateDailyAverages(data);
+            console.log('Daily Averages:', averages);
+
+            // Extract labels (dates) and datasets (temperature and luminosity averages)
+            const labels = averages.map(avg => avg.date);
+            const temperatureData = averages.map(avg => avg.averageTemperature);
+            const luminosityData = averages.map(avg => avg.averageLuminosity);
+
+            // Destroy the existing chart instance if it exists
+            if (visualTempChart) {
+                visualTempChart.destroy();
+            }
+
+            // Update the chart with the calculated data
+            const ctx = document.getElementById('visualTemp').getContext('2d');
+            visualTempChart = new Chart(ctx, {
+                type: 'line', // Line chart
+                data: {
+                    labels: labels, // Dates
+                    datasets: [{
+                            label: 'Average Temperature (°C)',
+                            data: temperatureData, // Average temperatures
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Average Luminosity (LUX)',
+                            data: luminosityData, // Average luminosities
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        }
+
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Daily Averages of Temperature and Luminosity'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Value'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching historical data:', error));
 }
 
 function calculateDailyAverages(data) {
@@ -588,6 +714,113 @@ function calculateDailyAverages(data) {
     return dailyAverages;
 }
 
+let fanWorkingChart; // Global variable to store the fan working chart instance
+
+function fetchFanWorkingCount() {
+    const dateStart = new Date();
+    const range = document.getElementById('menu-range-fan').value;
+
+    // Adjust the start date based on the selected range
+    if (range === 'Week') {
+        dateStart.setDate(dateStart.getDate() - 7); // Subtract 7 days
+    } else if (range === 'Month') {
+        dateStart.setDate(dateStart.getDate() - 30); // Subtract 30 days
+    }
+    const formattedDateStart = dateStart.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    const dateEnd = new Date();
+    dateEnd.setDate(dateEnd.getDate() - 1); // Subtract 1 day for the end date
+    const formattedDateEnd = dateEnd.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    // Construct the POST body with parameters
+    const postBody = `dateStart=${formattedDateStart}&dateEnd=${formattedDateEnd}`;
+
+    fetch('fetch_lightfan.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: postBody,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Fan Data:', data);
+
+            // Calculate daily counts for the fan
+            const dailyCounts = calculateFanDailyCounts(data.fan);
+            console.log('Fan Daily Counts:', dailyCounts);
+
+            // Extract labels (dates) and datasets (fan working counts)
+            const labels = dailyCounts.map(count => count.date);
+            const fanCounts = dailyCounts.map(count => count.count);
+
+            // Destroy the existing chart instance if it exists
+            if (fanWorkingChart) {
+                fanWorkingChart.destroy();
+            }
+
+            // Update the chart with the calculated data
+            const ctx = document.getElementById('fanWorkingChart').getContext('2d');
+            fanWorkingChart = new Chart(ctx, {
+                type: 'bar', // Bar chart
+                data: {
+                    labels: labels, // Dates
+                    datasets: [{
+                        label: 'Fan Working Count',
+                        data: fanCounts, // Daily counts
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Fan Working Count Per Day'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching fan data:', error));
+}
+
+function calculateFanDailyCounts(fanData) {
+    const groupedData = {};
+
+    // Group fan data by date
+    fanData.forEach(record => {
+        const date = record.DateTime.split(' ')[0]; // Extract the date (YYYY-MM-DD)
+        if (!groupedData[date]) {
+            groupedData[date] = 0;
+        }
+        groupedData[date] += 1; // Increment the count for the date
+    });
+
+    // Convert grouped data into an array of objects
+    return Object.entries(groupedData).map(([date, count]) => ({
+        date,
+        count
+    }));
+}
+
 // Call fetchdata.php every 1.5 seconds
 setInterval(callFetchData, 1500);
 
@@ -599,6 +832,8 @@ setInterval(updateChart, 1600);
 
 fetchHistoryTemp();
 
+fetchFanWorkingCount();
+
 
 
 window.addEventListener('resize', () => {
@@ -609,3 +844,6 @@ src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
 window.addEventListener('resize', () => {
     realTimeChart.resize(); // Trigger Chart.js to resize dynamically
 });
+
+console.log("dashdisplay.js is loaded!");
+
