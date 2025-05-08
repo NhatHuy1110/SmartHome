@@ -2,129 +2,55 @@
 <html lang="en">
 <?php
 session_start();
-require 'Connection.php';
-$conn = Connect();
-$api_key = "aio_itBH53rzbfnwfhiabK1R9p2mAOKx"; // Replace with your Adafruit IO API Key
-$feed_url = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";
-$feed_url1 = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/led";
+#echo $_SESSION['uid'] ?? 'UID not set';
+#This here is outdated and is only a fallback, replace all that is here with the contents of dashdisplay.php, if it works properly
+require_once 'Connection2.php'; // Use the DBConn class
+require_once 'config.php';
+
+$db = new DBConn();
+
+$conn = $db->getConnection();
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $feed_url);
+curl_setopt($ch, CURLOPT_URL, $fanControlFeedUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $api_key"));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $adaApiKey"));
 
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
     echo 'Error fetching data: ' . curl_error($ch);
 } else {
     $data = json_decode($response, true);
-    $latest_value = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+    if (isset($data['last_value'])) {
+        $latest_value = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+    }
 }
 
-curl_setopt($ch, CURLOPT_URL, $feed_url1);
+curl_setopt($ch, CURLOPT_URL, $ledControlFeedUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $api_key"));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-AIO-Key: $adaApiKey"));
 
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
     echo 'Error fetching data: ' . curl_error($ch);
 } else {
     $data = json_decode($response, true);
-    $latest_value1 = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+    if (isset($data['last_value'])) {
+        $latest_value = $data['last_value']; // Assuming 'last_value' holds the latest feed value
+    }
 }
 
 curl_close($ch);
+
+$latest_value = $latest_value ?? 0; // Default to 0 if not set
+$latest_value1 = $latest_value1 ?? 0; // Default to 0 if not set
 ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&amp;subset=devanagari,latin-ext" rel="stylesheet">
-    <link rel="shortcut icon" type="image/icon" href="assets/logo/favicon.png" />
-
-    <!-- Css for data display box -->
-    <link rel="stylesheet" href="assets/css/DisplayBox.css">
-
-    <!-- Font-awesome.min.css -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-
-    <!-- Flat icon css -->
-    <link rel="stylesheet" href="assets/css/flaticon.css">
-
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="assets/css/animate.css">
-
-    <!-- Owl.carousel.css -->
-    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
-
-    <!-- Bootstrap.min.css -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
-    <!-- Bootsnav -->
-    <link rel="stylesheet" href="assets/css/bootsnav.css">
-
-    <link rel="stylesheet" href="assets/css/user.css">
-
-    <link rel="stylesheet" href="assets/css/viewshopdetails.css">
-
-    <!-- Style.css -->
-    <link rel="stylesheet" href="assets/css/style.css">
-
-    <!-- Responsive.css -->
-    <link rel="stylesheet" href="assets/css/responsive.css">
-
-    <!-- chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script src="https://kit.fontawesome.com/6b23de7647.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="notifHandler.js"></script>
-
-
-
-    <title>Dash Board</title>
-</head>
+<?php include 'head.php'; ?>
 
 <body>
 
-    <div class="header-area">
-        <!-- Start Navigation -->
-        <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
-            <div class="container">
-                <!-- Start Header Navigation -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <a class="navbar-brand" href="index.php">Smart Home</a>
-                </div><!--/.navbar-header-->
-                <!-- End Header Navigation -->
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class=" smooth-menu active"></li>
-                        <li><a href="Dash_Board.php">Dash Board</a></li>
-                        <li><a href="log.php">Log</a></li>
-                        <li><a href="Event.php">Event</a></li>
-                        <li><a href="Profile.php">Profile</a></li>
-                        <li><a href="Logout.php">Logout</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle text-light" id="numUnseen" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
-                                <span class="counter" style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%;">0</span>
-                                <i class="fas fa-bell" style="font-size: 20px;"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <div class="notification" style="max-height: 200px; overflow-y: auto;"></div>
-                            </div>
-                        </li>
-                    </ul><!--/.nav -->
-                </div><!-- /.navbar-collapse -->
-            </div><!--/.container-->
-        </nav><!--/nav-->
-        <!-- End Navigation -->
-    </div><!--/.header-area-->
+    <?php include 'navbar.php'; ?>
 
     <div class="clearfix"></div>
 
@@ -149,17 +75,36 @@ curl_close($ch);
                         <p id="presence" class="data-value"></p>
                     </div>
                 </div>
+
                 <div class="chartContainer">
                     <canvas id="realTimeChart"></canvas>
                 </div>
 
                 <div class="chartContainer">
                     <label>Select an Option:</label>
-                    <select id="menu-range" name="menu" onchange="handleDropdownChange()">
+                    <select id="menu-range" name="menu" onchange="fetchHistoryTemp()">
                         <option value="Week">7 Days</option>
                         <option value="Month">30 Days</option>
                     </select>
                     <canvas id="visualTemp"></canvas>
+                </div>
+
+                <!-- <div class="chartContainer">
+                    <label>Select an Option:</label>
+                    <select id="menu-range" name="menu" onchange="fetchHistoryOutput()">
+                        <option value="Week">7 Days</option>
+                        <option value="Month">30 Days</option>
+                    </select>
+                    <canvas id="visualOutput"></canvas>
+                </div> -->
+
+                <div class="chartContainer">
+                    <label>Select an Option:</label>
+                    <select id="menu-range-fan" name="menu" onchange="fetchFanWorkingCount()">
+                        <option value="Week">7 Days</option>
+                        <option value="Month">30 Days</option>
+                    </select>
+                    <canvas id="fanWorkingChart"></canvas>
                 </div>
 
             </div>
@@ -168,68 +113,68 @@ curl_close($ch);
             <div class="right-section">
                 <div class="box">
                     <h3>LED Control</h3>
-                    <div class="slider-container">
-                        <input type="range" class="slider" id="powerSlider1" min="0" max="100" step="5" value="<?php echo $latest_value1; ?>">
-                        <div class="value-display">
-                            LED Power: <span id="sliderValue1"><?php echo $latest_value1; ?></span>%
-                        </div>
+                    <div class="slider-container"></div>
+                    <input type="range" class="slider" id="powerSlider1" min="0" max="100" step="5" value="<?php echo $latest_value1; ?>">
+                    <div class="value-display">
+                        LED Power: <span id="sliderValue1"><?php echo $latest_value1; ?></span>%
                     </div>
                 </div>
-                <div class="box">
-                    <h3>Fan Control</h3>
-                    <div class="slider-container">
-                        <input type="range" class="slider" id="powerSlider" min="0" max="100" step="5" value="<?php echo $latest_value; ?>">
-                        <div class="value-display">
-                            Fan Power: <span id="sliderValue"><?php echo $latest_value; ?></span>%
-                        </div>
+            </div>
+            <div class="box">
+                <h3>Fan Control</h3>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="powerSlider" min="0" max="100" step="5" value="<?php echo $latest_value; ?>">
+                    <div class="value-display">
+                        Fan Power: <span id="sliderValue"><?php echo $latest_value; ?></span>%
                     </div>
                 </div>
-                <div class="box">
-                    <h3>Automation</h3>
-                    <div class="toggle-row">
-                        <span>Automatic:</span>
-                        <label class="switch">
-                            <input type="checkbox" id="automaticToggle">
-                            <span class="slider1 round"></span>
-                        </label>
-                        <button id="resetButton">Reset</button>
+            </div>
+            <div class="box">
+                <h3>Automation</h3>
+                <div class="toggle-row">
+                    <span>Automatic:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="automaticToggle">
+                        <span class="slider1 round"></span>
+                    </label>
+                    <button id="resetButton">Reset</button>
+                </div>
+                <div id="inputBoxContainer" class="hidden">
+                    <h4>Input Thresholds</h4>
+                    <div class="input-group">
+                        <label for="lightThreshold">Light Threshold:</label>
+                        <input type="number" id="lightThreshold" placeholder="Enter light threshold">
                     </div>
-                    <div id="inputBoxContainer" class="hidden">
-                        <h4>Input Thresholds</h4>
-                        <div class="input-group">
-                            <label for="lightThreshold">Light Threshold:</label>
-                            <input type="number" id="lightThreshold" placeholder="Enter light threshold">
-                        </div>
-                        <div class="input-group">
-                            <label for="lightLevel">Lower LED Power:</label>
-                            <input type="number" id="lightLevel" placeholder="Enter lower LED Power">
-                        </div>
-                        <div class="input-group">
-                            <label for="higherLightPower">Higher LED Power:</label>
-                            <input type="number" id="higherLightPower" placeholder="Enter higher LED power">
-                        </div>
-                        <div class="input-group">
-                            <label for="fanThreshold">Temperature Threshold:</label>
-                            <input type="number" id="fanThreshold" placeholder="Enter temperature threshold">
-                        </div>
-                        <div class="input-group">
-                            <label for="fanLevel">Higher Fan Power:</label>
-                            <input type="number" id="fanLevel" placeholder="Enter higher fan power">
-                        </div>
-                        <div class="input-group">
-                            <label for="lowerFanPower">Lower Fan Power:</label>
-                            <input type="number" id="lowerFanPower" placeholder="Enter lower fan power">
-                        </div>
-                        <div class="button-row">
-                            <button id="confirmButton">Confirm</button>
-                        </div>
+                    <div class="input-group">
+                        <label for="lightLevel">Lower LED Power:</label>
+                        <input type="number" id="lightLevel" placeholder="Enter lower LED Power">
                     </div>
-                    <div id="inputDisplay"></div>
+                    <div class="input-group">
+                        <label for="higherLightPower">Higher LED Power:</label>
+                        <input type="number" id="higherLightPower" placeholder="Enter higher LED power">
+                    </div>
+                    <div class="input-group">
+                        <label for="fanThreshold">Temperature Threshold:</label>
+                        <input type="number" id="fanThreshold" placeholder="Enter temperature threshold">
+                    </div>
+                    <div class="input-group">
+                        <label for="fanLevel">Higher Fan Power:</label>
+                        <input type="number" id="fanLevel" placeholder="Enter higher fan power">
+                    </div>
+                    <div class="input-group">
+                        <label for="lowerFanPower">Lower Fan Power:</label>
+                        <input type="number" id="lowerFanPower" placeholder="Enter lower fan power">
+                    </div>
+                    <div class="button-row">
+                        <button id="confirmButton">Confirm</button>
+                    </div>
+                </div>
+                <div id="inputDisplay"></div>
 
-
-                </div>
 
             </div>
+
+        </div>
         </div>
 
 
@@ -383,6 +328,7 @@ curl_close($ch);
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: new URLSearchParams({
+                            device: 'fan',
                             value: slider.value
                         })
                     })
@@ -414,12 +360,13 @@ curl_close($ch);
             debounceTimer1 = setTimeout(() => {
                 valueDisplay1.textContent = slider1.value;
 
-                fetch('proxy1.php', {
+                fetch('proxy.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: new URLSearchParams({
+                            device: 'led',
                             value: slider1.value
                         })
                     })
@@ -558,12 +505,13 @@ curl_close($ch);
             if (!isNaN(LightT) && !isNaN(LightL) && !isNaN(HLightP)) {
 
                 if (lowerLight) {
-                    fetch('proxy1.php', {
+                    fetch('proxy.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
                             body: new URLSearchParams({
+                                device: 'led',
                                 value: LightL
                             })
                         })
@@ -579,12 +527,13 @@ curl_close($ch);
                             slider1.addEventListener('input', handleSliderInput1);
                         });
                 } else if (higherLight) {
-                    fetch('proxy1.php', {
+                    fetch('proxy.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
                             body: new URLSearchParams({
+                                device: 'led',
                                 value: HLightP
                             })
                         })
@@ -611,6 +560,7 @@ curl_close($ch);
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
                             body: new URLSearchParams({
+                                device: 'fan',
                                 value: FanL
                             })
                         })
@@ -632,6 +582,7 @@ curl_close($ch);
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
                             body: new URLSearchParams({
+                                device: 'fan',
                                 value: LFanP
                             })
                         })
@@ -690,9 +641,12 @@ curl_close($ch);
                 .catch(error => console.error('Error fetching sensor data:', error));
         }
 
+        let visualTempChart; // Global variable to store the chart instance
+
         function fetchHistoryTemp() {
             const dateStart = new Date();
             const range = document.getElementById('menu-range').value;
+            console.log(range);
 
             // Adjust the start date based on the selected range
             if (range === 'Week') {
@@ -715,11 +669,14 @@ curl_close($ch);
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: postBody, // Send the constructed parameters
+                    body: postBody,
                 })
-                .then(response => response.json()) // Parse the JSON response
+                .then(response => {
+                    console.log('response:', response);
+                    return response.json();
+                })
                 .then(data => {
-                    console.log('Historical Data:', data); // Log the response data
+                    console.log('Historical Data:', data);
 
                     // Calculate daily averages
                     const averages = calculateDailyAverages(data);
@@ -730,9 +687,14 @@ curl_close($ch);
                     const temperatureData = averages.map(avg => avg.averageTemperature);
                     const luminosityData = averages.map(avg => avg.averageLuminosity);
 
+                    // Destroy the existing chart instance if it exists
+                    if (visualTempChart) {
+                        visualTempChart.destroy();
+                    }
+
                     // Update the chart with the calculated data
                     const ctx = document.getElementById('visualTemp').getContext('2d');
-                    new Chart(ctx, {
+                    visualTempChart = new Chart(ctx, {
                         type: 'line', // Line chart
                         data: {
                             labels: labels, // Dates
@@ -819,6 +781,250 @@ curl_close($ch);
             return dailyAverages;
         }
 
+        function fetchHistoryOutput() {
+            const dateStart = new Date();
+            const range = document.getElementById('menu-range').value;
+            console.log(range);
+
+            // Adjust the start date based on the selected range
+            if (range === 'Week') {
+                dateStart.setDate(dateStart.getDate() - 7); // Subtract 7 days
+            } else if (range === 'Month') {
+                dateStart.setDate(dateStart.getDate() - 30); // Subtract 30 days
+            }
+            const formattedDateStart = dateStart.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            const dateEnd = new Date();
+            dateEnd.setDate(dateEnd.getDate() - 1); // Subtract 1 day for the end date
+            const formattedDateEnd = dateEnd.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            // Construct the POST body with parameters
+            const postBody = `dateStart=${formattedDateStart}&dateEnd=${formattedDateEnd}`;
+
+            fetch('fetch_lightfan.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: postBody,
+                })
+                .then(response => {
+                    console.log('response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Light Fan Data:', data);
+
+                    // Calculate daily averages
+                    const averages = calculateDailyAverages(data);
+                    console.log('Daily Averages:', averages);
+
+                    // Extract labels (dates) and datasets (temperature and luminosity averages)
+                    const labels = averages.map(avg => avg.date);
+                    const temperatureData = averages.map(avg => avg.averageTemperature);
+                    const luminosityData = averages.map(avg => avg.averageLuminosity);
+
+                    // Destroy the existing chart instance if it exists
+                    if (visualTempChart) {
+                        visualTempChart.destroy();
+                    }
+
+                    // Update the chart with the calculated data
+                    const ctx = document.getElementById('visualTemp').getContext('2d');
+                    visualTempChart = new Chart(ctx, {
+                        type: 'line', // Line chart
+                        data: {
+                            labels: labels, // Dates
+                            datasets: [{
+                                    label: 'Average Temperature (°C)',
+                                    data: temperatureData, // Average temperatures
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: false,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Average Luminosity (LUX)',
+                                    data: luminosityData, // Average luminosities
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    fill: false,
+                                    tension: 0.1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Daily Averages of Temperature and Luminosity'
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Value'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching historical data:', error));
+        }
+
+        function calculateDailyAverages(data) {
+            const groupedData = {};
+
+            // Group temperatures and luminosities by date
+            data.forEach(record => {
+                const date = record.DateTime.split(' ')[0]; // Extract the date (YYYY-MM-DD)
+                if (!groupedData[date]) {
+                    groupedData[date] = {
+                        temperatures: [],
+                        luminosities: []
+                    };
+                }
+                groupedData[date].temperatures.push(Number(record.Temperature)); // Ensure Temperature is a number
+                groupedData[date].luminosities.push(Number(record.Luminosity)); // Ensure Luminosity is a number
+            });
+
+            console.log(`Grouped Data:`, groupedData);
+
+            // Calculate the average temperature and luminosity for each date
+            const dailyAverages = Object.entries(groupedData).map(([date, values]) => {
+                const totalTemperature = values.temperatures.reduce((sum, temp) => sum + temp, 0); // Sum all temperatures
+                const averageTemperature = totalTemperature / values.temperatures.length; // Calculate the average temperature
+
+                const totalLuminosity = values.luminosities.reduce((sum, lum) => sum + lum, 0); // Sum all luminosities
+                const averageLuminosity = totalLuminosity / values.luminosities.length; // Calculate the average luminosity
+
+                return {
+                    date,
+                    averageTemperature: averageTemperature.toFixed(2), // Round to 2 decimal places
+                    averageLuminosity: averageLuminosity.toFixed(2) // Round to 2 decimal places
+                };
+            });
+
+            return dailyAverages;
+        }
+
+        let fanWorkingChart; // Global variable to store the fan working chart instance
+
+        function fetchFanWorkingCount() {
+            const dateStart = new Date();
+            const range = document.getElementById('menu-range-fan').value;
+
+            // Adjust the start date based on the selected range
+            if (range === 'Week') {
+                dateStart.setDate(dateStart.getDate() - 7); // Subtract 7 days
+            } else if (range === 'Month') {
+                dateStart.setDate(dateStart.getDate() - 30); // Subtract 30 days
+            }
+            const formattedDateStart = dateStart.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            const dateEnd = new Date();
+            dateEnd.setDate(dateEnd.getDate() - 1); // Subtract 1 day for the end date
+            const formattedDateEnd = dateEnd.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            // Construct the POST body with parameters
+            const postBody = `dateStart=${formattedDateStart}&dateEnd=${formattedDateEnd}`;
+
+            fetch('fetch_lightfan.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: postBody,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fan Data:', data);
+
+                    // Calculate daily counts for the fan
+                    const dailyCounts = calculateFanDailyCounts(data.fan);
+                    console.log('Fan Daily Counts:', dailyCounts);
+
+                    // Extract labels (dates) and datasets (fan working counts)
+                    const labels = dailyCounts.map(count => count.date);
+                    const fanCounts = dailyCounts.map(count => count.count);
+
+                    // Destroy the existing chart instance if it exists
+                    if (fanWorkingChart) {
+                        fanWorkingChart.destroy();
+                    }
+
+                    // Update the chart with the calculated data
+                    const ctx = document.getElementById('fanWorkingChart').getContext('2d');
+                    fanWorkingChart = new Chart(ctx, {
+                        type: 'bar', // Bar chart
+                        data: {
+                            labels: labels, // Dates
+                            datasets: [{
+                                label: 'Fan Working Count',
+                                data: fanCounts, // Daily counts
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Fan Working Count Per Day'
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Count'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching fan data:', error));
+        }
+
+        function calculateFanDailyCounts(fanData) {
+            const groupedData = {};
+
+            // Group fan data by date
+            fanData.forEach(record => {
+                const date = record.DateTime.split(' ')[0]; // Extract the date (YYYY-MM-DD)
+                if (!groupedData[date]) {
+                    groupedData[date] = 0;
+                }
+                groupedData[date] += 1; // Increment the count for the date
+            });
+
+            // Convert grouped data into an array of objects
+            return Object.entries(groupedData).map(([date, count]) => ({
+                date,
+                count
+            }));
+        }
+
         // Call fetchdata.php every 1.5 seconds
         setInterval(callFetchData, 1500);
 
@@ -829,6 +1035,8 @@ curl_close($ch);
         setInterval(updateChart, 1600);
 
         fetchHistoryTemp();
+
+        fetchFanWorkingCount()
     </script>
 
 
@@ -842,11 +1050,6 @@ curl_close($ch);
         src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
         window.addEventListener('resize', () => {
             realTimeChart.resize(); // Trigger Chart.js to resize dynamically
-        });
-        $(document).ready(function() {
-            $('#navbar-menu').on('show.bs.collapse', function() {
-                $(this).css('height', 'auto'); // Set height dynamically
-            });
         });
     </script>
 

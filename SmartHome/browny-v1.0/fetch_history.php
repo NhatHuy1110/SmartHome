@@ -1,7 +1,8 @@
 <?php
 session_start();
-require 'Connection.php'; // Include database connection
-$conn = Connect();
+require_once 'Connection2.php'; // Use DBConn-based connection
+$db = new DBConn();
+$conn = $db->getConnection();
 
 header('Content-Type: application/json'); // Set the content type to JSON
 
@@ -39,4 +40,4 @@ if (isset($_POST['dateStart']) && isset($_POST['dateEnd'])) {
     echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
 }
 
-$conn->close(); // Close the database connection
+//$conn->close(); // Close the database connection

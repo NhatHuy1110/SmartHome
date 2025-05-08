@@ -1,19 +1,16 @@
 <?php
 session_start();
-require 'Connection.php'; // Include database connection
-$conn = Connect();
+require_once 'Connection2.php'; // Use the updated connection class
+$db = new DBConn();
 
-$uid = $_SESSION['uid'];
-$sql = "SELECT * FROM event WHERE UID = {$uid}"; // Query to fetch all records from the 'event' table
-$result = $conn->query($sql);
+// Fetch all columns from the 'event' table without constraints
+$result = $db->selectWhere('event', [], '', 0, 'DESC');
 
-$data = array(); // Initialize an empty array
+$data = array();
 
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) { // Loop through all rows
-        $data[] = $row; // Add each row to the $data array
-    }
+if ($result) {
+    $data = $result; // Already an array of associative arrays
 }
 
-header('Content-Type: application/json'); // Set the content type to JSON
-echo json_encode($data); // Convert the $data array to JSON and echo it
+header('Content-Type: application/json');
+echo json_encode($data);

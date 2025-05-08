@@ -1,13 +1,22 @@
 <?php
-require 'Connection.php'; // Include database connection
-$conn = Connect();
+require_once 'Connection2.php'; // Include database connection using DBConn class
+$db = new DBConn();
 
-$sql = "SELECT Luminosity, Temperature, Presence, DateTime FROM Room WHERE RID = 1";
-//"SELECT Luminosity, Temperature, Presence, DateTime FROM Sensors ORDER BY DateTime DESC LIMIT 1"; // Fetch the latest row
-$result = $conn->query($sql);
-
+// Use the selectWhere function to fetch data
+$whereConditions = ['RID' => 1];
+$columns = ['Luminosity', 'Temperature', 'Presence', 'DateTime'];
+$result = $db->selectWhere(
+    'Room',
+    $whereConditions,
+    '',
+    0,
+    'DESC',
+    'i',
+    $columns
+);
 $data = array();
-if ($result->num_rows > 0) {
-    $data = $result->fetch_assoc(); // Fetch the single latest row as an associative array
+if ($result) {
+    $data = $result[0]; // Get the first (and only) row from the result array
 }
+
 echo json_encode($data); // Return the data in JSON format
