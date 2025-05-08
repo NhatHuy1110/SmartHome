@@ -75,7 +75,7 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
                     });
                 })
                 .catch(error => console.error('Error fetching events:', error));
-        }, 60000); // Check every 60 seconds
+        }, 10000); // Check every 60 seconds
     });
 
     function turnOnLightAndFan() {
