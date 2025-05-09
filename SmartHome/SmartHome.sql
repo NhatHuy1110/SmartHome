@@ -1,5 +1,6 @@
 create database SmartHome;
 use SmartHome;
+SET GLOBAL event_scheduler = ON;
 
 CREATE TABLE User (
 	UID INT AUTO_INCREMENT PRIMARY KEY,
@@ -15,10 +16,7 @@ CREATE TABLE Event (
 	Start_Time TIME NOT NULL,
 	Duration INT NOT NULL, -- Duration in minutes
 	ERepeat VARCHAR(50),
-	Temp_Upper DECIMAL(5,2),
-	Temp_Lower DECIMAL(5,2),
-	Lum_Upper DECIMAL(5,2),
-	Lum_Lower DECIMAL(5,2),
+	Status VARCHAR(3),
 	FOREIGN KEY (UID) REFERENCES User(UID) ON DELETE CASCADE
 );
 
@@ -170,6 +168,27 @@ BEGIN
 END;
 //
 
+CREATE EVENT notify_event_start
+ON SCHEDULE EVERY 5 SECOND
+DO
+BEGIN
+    INSERT INTO Notification (EID, DateTime, Error_Message)
+    SELECT
+        E.EID,
+        NOW(),
+        CONCAT('Event "', E.EName, '" has started in Room ', A.RID)
+    FROM Event E
+    JOIN At A ON E.EID = A.EID
+    LEFT JOIN Notification N
+        ON N.EID = E.EID
+        AND TIMESTAMPDIFF(SECOND, TIMESTAMP(E.EDate, E.Start_Time), N.DateTime) BETWEEN 1 AND 7
+        AND N.Error_Message LIKE 'Event "% has started in Room %'
+    WHERE
+        TIMESTAMPDIFF(SECOND, TIMESTAMP(E.EDate, E.Start_Time), NOW()) BETWEEN 1 AND 7
+        AND N.EID IS NULL;
+END;
+//
+
 DELIMITER ;
 
 INSERT INTO User (UID,Username, Password) VALUES (1,'username1', 'password123'), (2,'username2', 'securepass');
@@ -177,8 +196,8 @@ INSERT INTO User (UID,Username, Password) VALUES (1,'username1', 'password123'),
 INSERT INTO Room (RID, DateTime, Luminosity, Temperature, Presence) VALUES
 (1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
 
-INSERT INTO Event (UID, EName, EDate, Start_Time, Duration, ERepeat, Temp_Upper, Temp_Lower, Lum_Upper, Lum_Lower)
-VALUES (1, 'Morning Routine', '2025-04-25', '08:00:00', 0, 'Daily', 26.0, 20.0, 70.0, 30.0);
+INSERT INTO Event (UID, EName, EDate, Start_Time, Duration, ERepeat, Status)
+VALUES (1, 'Morning Routine', '2025-04-25', '08:00:00', 0, 'Daily', 'On');
 
 INSERT INTO At (EID, RID) VALUES (1, 1);
 

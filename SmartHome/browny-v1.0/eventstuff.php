@@ -102,107 +102,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['EID']) && isset($_POS
         const addEventBtn = document.getElementById('add-event-btn');
         const closeDialogBtn = document.getElementById('close-dialog-btn');
         const addEventForm = document.getElementById('add-event-form');
-        addEventForm.reset()
 
-        // Open the dialog when the "Add New Event" button is clicked
+        // Open dialog
         addEventBtn.addEventListener('click', () => {
+            addEventForm.reset();
+            addEventForm.dataset.mode = 'add';
+            addEventForm.dataset.eid = '';
+            addEventForm.querySelector('h2').textContent = 'Add New Event';
+            addEventForm.querySelector('button[type="submit"]').textContent = 'Add Event';
             dialog.showModal();
         });
 
-        // Close the dialog when the "Cancel" button is clicked
-        closeDialogBtn.addEventListener('click', () => {
-            dialog.close();
-        });
+        // Close dialog
+        closeDialogBtn.addEventListener('click', () => dialog.close());
 
-        // Handle form submission
+        // Handle submit
         addEventForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent the default form submission
-
-            // Collect form data
+            e.preventDefault();
             const formData = new FormData(addEventForm);
+            const mode = addEventForm.dataset.mode;
             const eventData = {
                 EDate: formData.get('event-date'),
                 Start_time: formData.get('start-time'),
                 Duration: formData.get('duration'),
-                ERepeat: formData.get('e-repeat'), // Include the ERepeat field
+                ERepeat: formData.get('e-repeat'),
             };
 
-            console.log(eventData);
+            let url = '';
+            if (mode === 'add') {
+                url = 'add_event.php';
+            } else {
+                eventData.EID = addEventForm.dataset.eid;
+                url = 'update_event.php';
+            }
 
-            // Send the data to the server
-            fetch('add_event.php', {
+            fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(eventData),
                 })
-                .then((response) => response.json())
+                .then((res) => res.json())
                 .then((data) => {
-                    console.log(data)
                     if (data.success) {
-                        alert('Event added successfully!');
-                        dialog.close(); // Close the dialog
-                        fetchDataEvents(); // Refresh the event list
-                    } else if (data.duplicate) {
-                        alert('An event with the same name and date already exists!');
+                        alert(`${mode === 'add' ? 'Added' : 'Updated'} successfully!`);
+                        dialog.close();
+                        fetchDataEvents();
                     } else {
-                        alert('Failed to add event: ' + data.message);
+                        alert('Error: ' + data.message);
                     }
-                })
-                .catch((error) => {
-                    console.error('Error adding event:', error);
                 });
         });
     });
 </script>
-
 <script>
     function editEvent(EID, date, startTime, duration, repeat) {
         const dialog = document.getElementById('add-event-dialog');
         const addEventForm = document.getElementById('add-event-form');
-        document.querySelector('#add-event-dialog h2').textContent = 'Edit Event';
-        const submitButton = addEventForm.querySelector('button[type="submit"]');
-        submitButton.textContent = 'Save Changes';
 
-        // Pre-fill the form
+        addEventForm.reset();
+        addEventForm.dataset.mode = 'edit';
+        addEventForm.dataset.eid = EID;
+
+        addEventForm.querySelector('h2').textContent = 'Edit Event';
+        addEventForm.querySelector('button[type="submit"]').textContent = 'Save Changes';
+
         addEventForm['event-date'].value = date;
         addEventForm['start-time'].value = startTime;
         addEventForm['duration'].value = duration;
         addEventForm['e-repeat'].value = repeat;
 
         dialog.showModal();
-
-        // Override submit temporarily for update
-        addEventForm.onsubmit = (e) => {
-            e.preventDefault();
-            const formData = new FormData(addEventForm);
-            const updateData = {
-                EDate: formData.get('event-date'),
-                Start_time: formData.get('start-time'),
-                Duration: formData.get('duration'),
-                ERepeat: formData.get('e-repeat'),
-                EID: EID
-            };
-
-            fetch('update_event.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(updateData),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Event updated successfully!');
-                        dialog.close();
-                        fetchDataEvents();
-                    } else {
-                        alert('Failed to update event.');
-                    }
-                });
-        };
     }
 
     function deleteEvent(EID) {
