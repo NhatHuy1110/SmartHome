@@ -120,14 +120,12 @@ function handleSliderInput() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         valueDisplay.textContent = slider.value;
-
-        fetch('proxy.php', {
+        fetch('sendFan.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                device: 'fan',
                 value: slider.value
             })
         })
@@ -158,14 +156,12 @@ function handleSliderInput1() {
     clearTimeout(debounceTimer1);
     debounceTimer1 = setTimeout(() => {
         valueDisplay1.textContent = slider1.value;
-
-        fetch('proxy.php', {
+        fetch('sendLed.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
-                device: 'led',
                 value: slider1.value
             })
         })
@@ -297,13 +293,12 @@ function handleLightAndFanSettings(Light, Temp) {
 
         if (lowerLight) {
             let lightOn = 100;
-            fetch('proxy.php', {
+            fetch('sendLed.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'led',
                     value: lightOn
                 })
             })
@@ -320,13 +315,12 @@ function handleLightAndFanSettings(Light, Temp) {
                 });
         } else if (higherLight) {
             let lightOff = 0;
-            fetch('proxy.php', {
+            fetch('sendLed.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'led',
                     value: lightOff
                 })
             })
@@ -348,13 +342,12 @@ function handleLightAndFanSettings(Light, Temp) {
     if (!isNaN(FanT)) {
         if (higherFan) {
             let fanOn = 100;
-            fetch('proxy.php', {
+            fetch('sendFan.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'fan',
                     value: fanOn
                 })
             })
@@ -371,13 +364,12 @@ function handleLightAndFanSettings(Light, Temp) {
                 });
         } else if (lowerFan) {
             let fanOff = 0;
-            fetch('proxy.php', {
+            fetch('sendFan.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'fan',
                     value: fanOff
                 })
             })

@@ -8,9 +8,9 @@ $db = new DBConn();
 // Check if the request is for JSON data
 if (isset($_GET['fetchData']) && $_GET['fetchData'] === 'true') {
     // Fetch all data from Sensors, Fan, and Light tables
-    $sensorsData = $db->selectWhere('Sensors', [], 'DateTime', 0, 'DESC');
-    $fanData = $db->selectWhere('Fan', [], 'DateTime', 0, 'DESC');
-    $lightData = $db->selectWhere('Light', [], 'DateTime', 0, 'DESC');
+    $sensorsData = $db->selectWhere('Sensors', [], 'DateTime', 0, 'DESC', '', ['DateTime', 'Luminosity', 'Temperature', 'Presence']);
+    $fanData = $db->selectWhere('Fan', [], 'DateTime', 0, 'DESC', '', ['DateTime', 'Fan_Speed']);
+    $lightData = $db->selectWhere('Light', [], 'DateTime', 0, 'DESC', '', ['DateTime', 'Intensity']);
 
     // Return the data as JSON
     echo json_encode([
@@ -40,11 +40,10 @@ include 'head.php';
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>RID</th>
-                    <th>DateTime</th>
-                    <th>Luminosity</th>
-                    <th>Temperature</th>
-                    <th>Presence</th>
+                    <th data-column="DateTime" data-order="asc" onclick="sortSensor(this)">DateTime</th>
+                    <th data-column="Luminosity" data-order="asc" onclick="sortSensor(this)">Luminosity</th>
+                    <th data-column="Temperature" data-order="asc" onclick="sortSensor(this)">Temperature</th>
+                    <th data-column="Presence" data-order="asc" onclick="sortSensor(this)">Presence</th>
                 </tr>
             </thead>
             <tbody id="sensorsTableBody">
@@ -61,10 +60,8 @@ include 'head.php';
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>RID</th>
-                    <th>FID</th>
-                    <th>DateTime</th>
-                    <th>Fan Speed</th>
+                    <th data-column="DateTime" data-order="asc" onclick="sortFan(this)">DateTime</th>
+                    <th data-column="Fan_Speed" data-order="asc" onclick="sortFan(this)">Fan Speed</th>
                 </tr>
             </thead>
             <tbody id="fanTableBody">
@@ -81,10 +78,8 @@ include 'head.php';
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>RID</th>
-                    <th>LID</th>
-                    <th>DateTime</th>
-                    <th>Intensity</th>
+                    <th data-column="DateTime" data-order="asc" onclick="sortLight(this)">DateTime</th>
+                    <th data-column="Intensity" data-order="asc" onclick="sortLight(this)">Intensity</th>
                 </tr>
             </thead>
             <tbody id="lightTableBody">
@@ -102,14 +97,21 @@ include 'head.php';
         // JavaScript to handle pagination
         const rowsPerPage = 5;
 
+        let sensorsData = []; // Store the fetched sensors data globally
+        let fanData = []; // Store the fetched fan data globally
+        let lightData = []; // Store the fetched light data globally
+
         // Fetch all data from the server
         fetch('log.php?fetchData=true')
             .then(response => response.json())
             .then(data => {
-                // Populate tables with pagination
-                setupPagination(data.sensors, 'sensorsTableBody', 'sensorsPagination');
-                setupPagination(data.fan, 'fanTableBody', 'fanPagination');
-                setupPagination(data.light, 'lightTableBody', 'lightPagination');
+                sensorsData = data.sensors; // Store sensors data globally
+                fanData = data.fan; // Store fan data globally
+                lightData = data.light; // Store light data globally
+
+                setupPagination(sensorsData, 'sensorsTableBody', 'sensorsPagination');
+                setupPagination(fanData, 'fanTableBody', 'fanPagination');
+                setupPagination(lightData, 'lightTableBody', 'lightPagination');
             })
             .catch(error => console.error('Error fetching data:', error));
 
@@ -176,6 +178,69 @@ include 'head.php';
                 li.appendChild(a);
                 pagination.appendChild(li);
             }
+        }
+
+        // Function to sort the sensors table
+        function sortSensor(header) {
+            const column = header.getAttribute('data-column'); // Get the column to sort by
+            const order = header.getAttribute('data-order'); // Get the current sorting order
+
+            // Sort the data
+            sensorsData.sort((a, b) => {
+                if (order === 'asc') {
+                    return a[column] > b[column] ? 1 : -1;
+                } else {
+                    return a[column] < b[column] ? 1 : -1;
+                }
+            });
+
+            // Toggle the sorting order
+            header.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+
+            // Re-render the table with the sorted data
+            setupPagination(sensorsData, 'sensorsTableBody', 'sensorsPagination');
+        }
+
+        // Function to sort the fan table
+        function sortFan(header) {
+            const column = header.getAttribute('data-column'); // Get the column to sort by
+            const order = header.getAttribute('data-order'); // Get the current sorting order
+
+            // Sort the data
+            fanData.sort((a, b) => {
+                if (order === 'asc') {
+                    return a[column] > b[column] ? 1 : -1;
+                } else {
+                    return a[column] < b[column] ? 1 : -1;
+                }
+            });
+
+            // Toggle the sorting order
+            header.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+
+            // Re-render the table with the sorted data
+            setupPagination(fanData, 'fanTableBody', 'fanPagination');
+        }
+
+        // Function to sort the light table
+        function sortLight(header) {
+            const column = header.getAttribute('data-column'); // Get the column to sort by
+            const order = header.getAttribute('data-order'); // Get the current sorting order
+
+            // Sort the data
+            lightData.sort((a, b) => {
+                if (order === 'asc') {
+                    return a[column] > b[column] ? 1 : -1;
+                } else {
+                    return a[column] < b[column] ? 1 : -1;
+                }
+            });
+
+            // Toggle the sorting order
+            header.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+
+            // Re-render the table with the sorted data
+            setupPagination(lightData, 'lightTableBody', 'lightPagination');
         }
     </script>
 

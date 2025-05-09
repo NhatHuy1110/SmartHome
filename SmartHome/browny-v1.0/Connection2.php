@@ -1,7 +1,7 @@
 <?php
 class DBConn
 {
-    private $host = 'localhost';
+    private $host = 'localhost:3307';
     private $user = 'root';
     private $pass = '';
     private $dbname = 'smarthome';
