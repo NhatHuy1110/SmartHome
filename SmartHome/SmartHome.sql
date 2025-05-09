@@ -168,24 +168,41 @@ BEGIN
 END;
 //
 
-CREATE EVENT notify_event_start
-ON SCHEDULE EVERY 5 SECOND
-DO
+CREATE TRIGGER event_start_notification
+AFTER INSERT ON Sensors
+FOR EACH ROW
 BEGIN
-    INSERT INTO Notification (EID, DateTime, Error_Message)
-    SELECT
-        E.EID,
-        NOW(),
-        CONCAT('Event "', E.EName, '" has started in Room ', A.RID)
-    FROM Event E
-    JOIN At A ON E.EID = A.EID
-    LEFT JOIN Notification N
-        ON N.EID = E.EID
-        AND TIMESTAMPDIFF(SECOND, TIMESTAMP(E.EDate, E.Start_Time), N.DateTime) BETWEEN 1 AND 7
-        AND N.Error_Message LIKE 'Event "% has started in Room %'
-    WHERE
-        TIMESTAMPDIFF(SECOND, TIMESTAMP(E.EDate, E.Start_Time), NOW()) BETWEEN 1 AND 7
-        AND N.EID IS NULL;
+    DECLARE event_id INT;
+    DECLARE event_name VARCHAR(255);
+    DECLARE start_dt DATETIME;
+    DECLARE now_dt DATETIME;
+
+    SET now_dt = NEW.DateTime;
+
+    -- Find matching event that starts within ±7 seconds
+    SELECT E.EID, E.EName, TIMESTAMP(E.EDate, E.Start_Time)
+    INTO event_id, event_name, start_dt
+    FROM At A
+    JOIN Event E ON A.EID = E.EID
+    WHERE A.RID = NEW.RID
+      AND (
+            (E.EDate = DATE(now_dt)) OR
+            (E.ERepeat = 'Daily') OR
+            (E.ERepeat = 'Weekly' AND MOD(DATEDIFF(DATE(now_dt), E.EDate), 7) = 0) OR
+            (E.ERepeat = 'Monthly' AND DAY(E.EDate) = DAY(DATE(now_dt)))
+          )
+      AND ABS(TIMESTAMPDIFF(SECOND, TIMESTAMP(E.EDate, E.Start_Time), now_dt)) <= 7
+    LIMIT 1;
+
+    -- If a matching event is found, insert a notification
+    IF event_id IS NOT NULL THEN
+        INSERT INTO Notification (EID, DateTime, Error_Message)
+        VALUES (
+            event_id,
+            now_dt,
+            CONCAT('Event "', event_name, '" has started in Room ', NEW.RID)
+        );
+    END IF;
 END;
 //
 
