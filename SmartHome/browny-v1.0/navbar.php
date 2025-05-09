@@ -59,7 +59,7 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
         $('#navbar-menu').on('show.bs.collapse', function() {
             $(this).css('height', 'auto');
         });
-
+        localStorage.setItem('eventFlag', 'true');
         // Check every minute for matching events
         setInterval(() => {
             fetch('fetch_events.php') // Fetch events again
@@ -71,14 +71,38 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
                     const now = new Date();
                     now.setSeconds(0, 0); // Set seconds and milliseconds to 0
                     const currentTime = now.toTimeString().split(' ')[0]; // Format as HH:mm:ss
-                    console.log(`current time: ${currentTime}`);
+                    let EFlag = localStorage.getItem('eventFlag') === 'true'; // Retrieve event flag state
 
                     data.forEach(event => {
-                        console.log(`event time: ${event.Start_Time}`);
-                        if (event.Start_Time === currentTime && event.Status === 'on') {
+                        // Convert event.Start_Time (HH:MM:SS) into hours, minutes, and seconds
+                        let [hours, minutes, seconds] = event.Start_Time.split(':').map(Number);
+
+                        // Add duration to minutes
+                        minutes += event.Duration;
+
+                        // Handle overflow if minutes exceed 60
+                        if (minutes >= 60) {
+                            hours += Math.floor(minutes / 60); // Add extra hours
+                            minutes = minutes % 60; // Keep remaining minutes
+                        }
+
+                        // Format back to HH:MM:SS
+                        let endTime = 
+                            String(hours).padStart(2, '0') + ':' + 
+                            String(minutes).padStart(2, '0') + ':' + 
+                            String(seconds).padStart(2, '0');
+
+                        if (event.Start_Time === currentTime && event.Status === 'on' && EFlag ) {
                             // Call the new function to turn on light and fan
                             console.log(`Event Matched: ${event.EID}, Start Time: ${event.Start_Time}, Status: ${event.Status}`);
-                            turnOnLightAndFan(); // Turn on light and fan at level 100
+                            turnLightAndFan(100); // Turn on light and fan at level 100
+                            localStorage.setItem('eventFlag', 'false');
+                        }
+                        if (endTime <= currentTime && event.Status === 'on' && !EFlag ) {
+                            // Call the new function to turn on light and fan
+                            console.log(`Event Matched: ${event.EID}, Start Time: ${event.Start_Time}, Status: ${event.Status}`);
+                            turnLightAndFan(0); // Turn on light and fan at level 0
+                            localStorage.setItem('eventFlag', 'true');
                         }
                     });
                 })
@@ -86,47 +110,40 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
         }, 10000); // Check every 60 seconds
     });
 
-    function turnOnLightAndFan() {
-        console.log("Turning on light and fan at level 100");
-
+    function turnLightAndFan(power) {
+        console.log("Turning on light and fan at level", power);
+        
         // Turn on light
-        fetch('proxy.php', {
+        fetch('sendLed.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'led',
-                    value: 100
+                    value: power
                 })
             })
             .then(() => {
-                console.log("Light turned on at level 100");
-                slider1.removeEventListener('input', handleSliderInput1);
-                slider1.value = 100; // Update slider dynamically
-                valueDisplay1.textContent = slider1.value;
-                slider1.addEventListener('input', handleSliderInput1); // Re-add event listener
+                console.log("Light turned at level", power);
             })
-            .catch(error => console.error('Error turning on light:', error));
+            .catch(error => console.error('Error turning light:', error));
 
         // Turn on fan
-        fetch('proxy.php', {
+        fetch('sendFan.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    device: 'fan',
-                    value: 100
+                    value: power
                 })
             })
             .then(() => {
-                console.log("Fan turned on at level 100");
-                slider.removeEventListener('input', handleSliderInput);
-                slider.value = 100; // Update slider dynamically
-                valueDisplay.textContent = slider.value;
-                slider.addEventListener('input', handleSliderInput); // Re-add event listener
+                console.log("Fan turned", power);
             })
-            .catch(error => console.error('Error turning on fan:', error));
+            .catch(error => console.error('Error turning fan:', error));
     }
+
+   
+
 </script>

@@ -1,5 +1,5 @@
 <?php
-$adaApiKey = "aio_JtPn09WDGNC95OxDXQfY7UHkblJP"; // Replace with your Adafruit IO API Key
+$adaApiKey = "aio_EPbe91H9mJaKatiZku9rE7NoLI9n"; // Replace with your Adafruit IO API Key
 
 // Feed endpoints (controls)
 $fanControlFeedUrl = "https://io.adafruit.com/api/v2/anhtanggroup1/feeds/fan-control";

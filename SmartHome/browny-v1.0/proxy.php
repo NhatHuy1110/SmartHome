@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $value = $_POST["value"] ?? null;
     $device = $_POST["device"] ?? null;
 
-    if (!$value) {
+    if ($value === null) {
         http_response_code(400);
         echo "Missing value.";
         exit();
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
     }
 
-    $data = json_encode(["value" => $value]);
+    $data = json_encode(["value" => $value]); // Force numeric format
 
     $ch = curl_init($dataUrl);
     curl_setopt($ch, CURLOPT_POST, true);
