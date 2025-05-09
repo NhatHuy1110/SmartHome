@@ -113,13 +113,6 @@ include 'head.php';
             gap: 10px;
         }
 
-        /* Toggle switch */
-        #navbar {
-            position: relative;
-            z-index: 10;
-            /* Ensures it stays in front */
-        }
-
         .checkbox {
             display: none;
         }
@@ -164,6 +157,19 @@ include 'head.php';
         }
 
         .edit-icon:hover {
+            color: #0056b3;
+        }
+
+        /* Delete icon */
+        .delete-icon {
+            color: #007bff;
+            font-size: 19px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .delete-icon:hover {
             color: #0056b3;
         }
 

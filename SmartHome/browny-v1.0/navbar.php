@@ -8,6 +8,13 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
     exit();
 }
 ?>
+<style>
+    #navbar {
+        position: relative;
+        z-index: 10;
+        /* Ensures it stays in front */
+    }
+</style>
 <div id="navbar">
     <div class="header-area">
         <nav class="navbar navbar-default bootsnav navbar-fixed dark no-background">
@@ -64,7 +71,6 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
                     const now = new Date();
                     now.setSeconds(0, 0); // Set seconds and milliseconds to 0
                     const currentTime = now.toTimeString().split(' ')[0]; // Format as HH:mm:ss
-
                     let EFlag = localStorage.getItem('eventFlag') === 'true'; // Retrieve event flag state
 
                     data.forEach(event => {
@@ -139,4 +145,5 @@ if (!isset($_SESSION['login_customer']) && $currentFile != 'index.php') {
     }
 
    
+
 </script>
