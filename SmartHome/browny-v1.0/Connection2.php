@@ -1,7 +1,7 @@
 <?php
 class DBConn
 {
-    private $host = 'localhost';
+    private $host;
     private $user = 'root';
     private $pass = '';
     private $dbname = 'smarthome';
@@ -22,6 +22,7 @@ class DBConn
             die("Connection failed on both ports 3306 and 3307.");
         }
 
+        $this->host = 'localhost:' . $this->connectedPort;
         $this->conn->set_charset("utf8mb4");
     }
     public function __destruct()
