@@ -200,8 +200,8 @@ INSERT INTO User (UID,Username, Password) VALUES (1,'username1', 'password123'),
 INSERT INTO Room (RID, DateTime, Luminosity, Temperature, Presence) VALUES
 (1, '2025-03-14 08:00:00', 50.5, 22.5, TRUE);
 
-INSERT INTO Event (UID, EName, EDate, Start_Time, Duration, ERepeat, Status)
-VALUES (1, 'Morning Routine', '2025-04-25', '08:00:00', 0, 'Daily', 'On');
+INSERT INTO Event (UID, EName, EDate, Start_Time, Duration, ERepeat, Temp_Upper, Temp_Lower, Lum_Upper, Lum_Lower, Status)
+VALUES (1, 'Morning Routine', '2025-04-25', '08:00:00', 0, 'Daily', 26.0, 20.0, 70.0, 30.0, 'On');
 
 INSERT INTO At (EID, RID) VALUES (1, 1);
 
