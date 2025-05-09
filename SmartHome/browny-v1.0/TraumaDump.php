@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'Connection2.php'; // Use the DBConn class
 require_once 'config.php';
 
